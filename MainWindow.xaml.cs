@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -68,7 +69,7 @@ namespace ProjectMediaPlayer
         int currentMediaIndex = 0; // Chỉ số của file đang được chọn
         bool isPaused = false;
         bool isShuffle = false;
-
+        bool isChangeByAuto = false;
         private const int HOTKEY_ID_PAUSE_PLAY = 9000;
         private const int HOTKEY_ID_SKIP = 9001;
         
@@ -118,6 +119,15 @@ namespace ProjectMediaPlayer
                 if (mediaElement.NaturalDuration.HasTimeSpan)
                 {
                     // Update the slider value
+                    isChangeByAuto = true;
+                    if (slider.Value == mediaElement.Position.TotalSeconds)
+                    {
+                        loadingProgressBar.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        loadingProgressBar.Visibility = Visibility.Hidden;
+                    }
                     slider.Value = mediaElement.Position.TotalSeconds;
                 }
             };
@@ -141,6 +151,24 @@ namespace ProjectMediaPlayer
             UnregisterHotKey(new WindowInteropHelper(this).Handle, HOTKEY_ID_SKIP);
         }
 
+        public BitmapImage LoadImage(byte[] imageData)
+        {
+            if (imageData == null || imageData.Length == 0) return null;
+            var image = new BitmapImage();
+            using (var mem = new MemoryStream(imageData))
+            {
+                mem.Position = 0;
+                image.BeginInit();
+                image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.UriSource = null;
+                image.StreamSource = mem;
+                image.EndInit();
+            }
+            image.Freeze();
+            return image;
+        }
+
         private void UpdateUI(String fileName)
         {
             try
@@ -149,6 +177,11 @@ namespace ProjectMediaPlayer
                 var file = TagLib.File.Create(fileName);
                 txtName.Text = file.Tag.Title;
                 txtSinger.Text = file.Tag.FirstPerformer;
+                if (file.Tag.Pictures.Length >= 1)
+                {
+                    var bin = (byte[])(file.Tag.Pictures[0].Data.Data);
+                    imgBg_Media.Source = LoadImage(bin);
+                }
                 mediaElement.Play();
                 timer.Start();
                 slider.Value = 0;
@@ -189,6 +222,16 @@ namespace ProjectMediaPlayer
             NextMediaFile();
         }
 
+        private void mediaElement_BufferingStarted(object sender, RoutedEventArgs e)
+        {
+            loadingProgressBar.Visibility = Visibility.Visible;
+        }
+
+        private void mediaElement_BufferingEnded(object sender, RoutedEventArgs e)
+        {
+            loadingProgressBar.Visibility = Visibility.Hidden;
+        }
+
         private void btnPlay_Click(object sender, RoutedEventArgs e)
         {
             if(mediaFileNames.Count == 0)
@@ -223,6 +266,12 @@ namespace ProjectMediaPlayer
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
+            if (isChangeByAuto)
+            {
+                isChangeByAuto = false;
+                return;
+            }
+
             mediaElement.Position = TimeSpan.FromSeconds(slider.Value);
         }
 
@@ -326,7 +375,7 @@ namespace ProjectMediaPlayer
             mediaFileNames = SelectMediaFiles(); // Chọn file
             if (mediaFileNames.Count > 0)
             {
-                UpdateUI(mediaFileNames[currentMediaIndex]); // Cập nhật giao diện
+                UpdateUI(mediaFileNames[0]); // Cập nhật giao diện
                 PlayList playList = new PlayList(mediaFileNames, "New PlayList " + (DataManager.Instance.GetMaxID() + 1).ToString()); ;
                 DataManager.Instance.AddPlayList(playList);
             }
