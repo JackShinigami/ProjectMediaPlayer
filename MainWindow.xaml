@@ -5,20 +5,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectMediaPlayer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1000" Loaded="WindowLoaded" Closing="WindowClosing">
+        Title="MainWindow"
+        Height="600"
+        Width="1000"
+        Loaded="WindowLoaded"
+        Closing="WindowClosing">
 
     <Window.Resources>
-        <Style x:Key="CircularProgressBar" TargetType="ProgressBar">
+        <Style x:Key="CircularProgressBar"
+               TargetType="ProgressBar">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressBar">
                         <Grid>
-                            <Ellipse Stroke="#FF01D328" StrokeThickness="10" StrokeDashArray="5">
+                            <Ellipse Stroke="#FF01D328"
+                                     StrokeThickness="10"
+                                     StrokeDashArray="5">
                                 <Ellipse.Triggers>
                                     <EventTrigger RoutedEvent="Ellipse.Loaded">
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetProperty="(Shape.StrokeDashOffset)" From="0" To="100" Duration="0:0:3" RepeatBehavior="Forever" />
+                                                <DoubleAnimation Storyboard.TargetProperty="(Shape.StrokeDashOffset)"
+                                                                 From="0"
+                                                                 To="100"
+                                                                 Duration="0:0:3"
+                                                                 RepeatBehavior="Forever" />
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </EventTrigger>
@@ -33,52 +44,200 @@
     </Window.Resources>
 
 
+    <Grid>
+        
+        <!--#region Grid 2x2-->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+        <!--#endregion-->
+
+        <!--#region Main content (0,0)-->         
+        <Border Background="#123"
+            >
+            
+        </Border>        
+        <!--#endregion-->
+                
+        <!--#region Playlist (0,2)-->        
+        <Border CornerRadius="10"
+                Grid.Column="2"
+                Background="#8fe">
+            
+        </Border>        
+        <!--#endregion-->
+        
+        <!--#region GridSpliter-->
+        <GridSplitter Grid.Column="1"
+                      Width="5"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch"
+                      ResizeBehavior="PreviousAndNext" />
+        <!--#endregion-->
+
+        <!--#region Meida bar(1,*)-->        
+        <Border Grid.Row="1">
+
+            <Grid HorizontalAlignment="Center">
+
+                <StackPanel Orientation="Horizontal">
+
+                    <ToggleButton x:Name="PlayPauseToggleButton"
+                                  
+                                  Style="{StaticResource PlayPauseToggleButtonSyle}"
+                                  Checked="PlayPauseToggleButton_Checked" />
+
+                </StackPanel>
+                
+            </Grid>
+            
+        </Border>        
+        <!--#endregion-->
+        
+        
+    </Grid>
+    
+    
+    <!--
     <Canvas>
-        <Grid Canvas.Left="10" Canvas.Top="3" Height="357" Width="685">
-            <Image x:Name="imgBg_Media" Stretch="Uniform"/>
+        <Grid Canvas.Left="10"
+              Canvas.Top="3"
+              Height="357"
+              Width="685">
+            <Image x:Name="imgBg_Media"
+                   Stretch="Uniform" />
             <MediaElement x:Name="mediaElement"
-                      LoadedBehavior="Manual" MediaOpened="mediaElement_MediaOpened" 
-                      MediaEnded="mediaElement_MediaEnded" 
-                      BufferingStarted="mediaElement_BufferingStarted" 
-                      BufferingEnded="mediaElement_BufferingEnded"/>
+                          LoadedBehavior="Manual"
+                          MediaOpened="mediaElement_MediaOpened"
+                          MediaEnded="mediaElement_MediaEnded"
+                          BufferingStarted="mediaElement_BufferingStarted"
+                          BufferingEnded="mediaElement_BufferingEnded" />
         </Grid>
-        <ProgressBar x:Name="loadingProgressBar" Style="{StaticResource CircularProgressBar}" Width="100" Height="100" Canvas.Left="302" Canvas.Top="132" Visibility="Hidden" />
-        <Button x:Name="btnPlay" Content="Play" Canvas.Left="761" Canvas.Top="15" Width="75" Click="btnPlay_Click" HorizontalAlignment="Center" VerticalAlignment="Top" />
-        <Button x:Name="btnPause" Content="Pause" Canvas.Left="761" Canvas.Top="40" Width="75" Click="btnPause_Click" />
-        <Button x:Name="btnStop" Content="Stop" Canvas.Left="761" Canvas.Top="65" Width="75" Click="btnStop_Click" />
-        <Button x:Name="btnNext" Content="Next" Canvas.Left="761" Canvas.Top="90" Width="75" Click="btnNext_Click" />
-        <Button x:Name="btnPrevious" Content="Previous" Canvas.Left="761" Canvas.Top="115" Width="75" Click="btnPrevious_Click" />
-        <Button x:Name="btnShuffle" Content="Shuffle" Canvas.Left="761" Canvas.Top="140" Width="75" Click="btnShuffle_Click" />
-        <Slider x:Name="sldVolume" Canvas.Left="761" Canvas.Top="172" Width="100" Minimum="0" Maximum="1" Value="{Binding ElementName=mediaElement, Path=Volume}" SmallChange="0.1"/>
-        <Slider x:Name="slider" Canvas.Left="5" Canvas.Top="361" Width="700" ValueChanged="slider_ValueChanged" Maximum="100" HorizontalAlignment="Center" VerticalAlignment="Top">
+        <ProgressBar x:Name="loadingProgressBar"
+                     Style="{StaticResource CircularProgressBar}"
+                     Width="100"
+                     Height="100"
+                     Canvas.Left="302"
+                     Canvas.Top="132"
+                     Visibility="Hidden" />
+        <Button x:Name="btnPlay"
+                Content="Play"
+                Canvas.Left="761"
+                Canvas.Top="15"
+                Width="75"
+                Click="btnPlay_Click"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top" />
+        <Button x:Name="btnPause"
+                Content="Pause"
+                Canvas.Left="761"
+                Canvas.Top="40"
+                Width="75"
+                Click="btnPause_Click" />
+        <Button x:Name="btnStop"
+                Content="Stop"
+                Canvas.Left="761"
+                Canvas.Top="65"
+                Width="75"
+                Click="btnStop_Click" />
+        <Button x:Name="btnNext"
+                Content="Next"
+                Canvas.Left="761"
+                Canvas.Top="90"
+                Width="75"
+                Click="btnNext_Click" />
+        <Button x:Name="btnPrevious"
+                Content="Previous"
+                Canvas.Left="761"
+                Canvas.Top="115"
+                Width="75"
+                Click="btnPrevious_Click" />
+        <Button x:Name="btnShuffle"
+                Content="Shuffle"
+                Canvas.Left="761"
+                Canvas.Top="140"
+                Width="75"
+                Click="btnShuffle_Click" />
+        <Slider x:Name="sldVolume"
+                Canvas.Left="761"
+                Canvas.Top="172"
+                Width="100"
+                Minimum="0"
+                Maximum="1"
+                Value="{Binding ElementName=mediaElement, Path=Volume}"
+                SmallChange="0.1" />
+        <Slider x:Name="slider"
+                Canvas.Left="5"
+                Canvas.Top="361"
+                Width="700"
+                ValueChanged="slider_ValueChanged"
+                Maximum="100"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top">
             <Slider.ToolTip>
                 <ToolTip Content="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Value, StringFormat={}{0:0.00}}" />
             </Slider.ToolTip>
             <Slider.Template>
                 <ControlTemplate TargetType="Slider">
                     <Grid>
-                        <ProgressBar Value="{TemplateBinding Value}" Maximum="{TemplateBinding Maximum}" Foreground="CadetBlue" Background="Transparent" />
+                        <ProgressBar Value="{TemplateBinding Value}"
+                                     Maximum="{TemplateBinding Maximum}"
+                                     Foreground="CadetBlue"
+                                     Background="Transparent" />
                         <Track x:Name="PART_Track">
                             <Track.Thumb>
-                                <Thumb Width="10" Height="10" />
-                                <!-- Set the size of the Thumb here -->
+                                <Thumb Width="10"
+                                       Height="10" />
+                                --><!-- Set the size of the Thumb here --><!--
                             </Track.Thumb>
                         </Track>
-                        <Track x:Name="PART_ClickableTrack" IsHitTestVisible="True">
+                        <Track x:Name="PART_ClickableTrack"
+                               IsHitTestVisible="True">
                             <Track.Thumb>
-                                <Thumb Width="0" Height="0" />
+                                <Thumb Width="0"
+                                       Height="0" />
                             </Track.Thumb>
                         </Track>
                     </Grid>
                 </ControlTemplate>
             </Slider.Template>
         </Slider>
-        <TextBlock x:Name="txtName" Text="Name" FontSize="20" FontWeight="Bold" Canvas.Left="5" Canvas.Top="376" Width="700" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" />
-        <TextBlock x:Name="txtSinger" Text="Singer" FontSize="15" FontStyle="Italic" Canvas.Left="5" Canvas.Top="408" Width="700" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" />
-        <StackPanel Canvas.Left="5" Canvas.Top="433" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <TextBlock x:Name="txtName"
+                   Text="Name"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Canvas.Left="5"
+                   Canvas.Top="376"
+                   Width="700"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top" />
+        <TextBlock x:Name="txtSinger"
+                   Text="Singer"
+                   FontSize="15"
+                   FontStyle="Italic"
+                   Canvas.Left="5"
+                   Canvas.Top="408"
+                   Width="700"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top" />
+        <StackPanel Canvas.Left="5"
+                    Canvas.Top="433"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
             <TextBlock Text="Play List" />
-            <ListBox x:Name="listBox_PlayList"  Width="300" Height="100" SelectionChanged="listBoxPlayList_SelectionChanged">
+            <ListBox x:Name="listBox_PlayList"
+                     Width="300"
+                     Height="100"
+                     SelectionChanged="listBoxPlayList_SelectionChanged">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical">
@@ -88,18 +247,50 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </StackPanel>
-        <StackPanel Canvas.Left="305" Canvas.Top="433" HorizontalAlignment="Center" VerticalAlignment="Top">
+        <StackPanel Canvas.Left="305"
+                    Canvas.Top="433"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top">
             <TextBlock Text="Songs" />
-            <ListBox x:Name="listBox_Songs"  Width="300" Height="100" SelectionChanged="listBoxSongs_SelectionChanged" >
+            <ListBox x:Name="listBox_Songs"
+                     Width="300"
+                     Height="100"
+                     SelectionChanged="listBoxSongs_SelectionChanged">
 
             </ListBox>
         </StackPanel>
-        <StackPanel Orientation="Vertical" Canvas.Left="748" Canvas.Top="433" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Button x:Name="bthAddPlayList" Content="Add PlayList" Canvas.Left="80" Canvas.Top="25" Width="100" Click="btnAddPlayList_Click" />
-            <Button x:Name="bthAddSong" Content="Add Song" Canvas.Left="80" Canvas.Top="25" Width="100" Click="btnAddSong_Click" />
-            <Button x:Name="bthRemovePlayList" Content="Remove PlayList" Canvas.Left="80" Canvas.Top="25" Width="100" Click="btnRemovePlayList_Click" />
-            <Button x:Name="bthRemoveSong" Content="Remove Song" Canvas.Left="80" Canvas.Top="25" Width="100" Click="btnRemoveSong_Click" />
+        <StackPanel Orientation="Vertical"
+                    Canvas.Left="748"
+                    Canvas.Top="433"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+            <Button x:Name="bthAddPlayList"
+                    Content="Add PlayList"
+                    Canvas.Left="80"
+                    Canvas.Top="25"
+                    Width="100"
+                    Click="btnAddPlayList_Click" />
+            <Button x:Name="bthAddSong"
+                    Content="Add Song"
+                    Canvas.Left="80"
+                    Canvas.Top="25"
+                    Width="100"
+                    Click="btnAddSong_Click" />
+            <Button x:Name="bthRemovePlayList"
+                    Content="Remove PlayList"
+                    Canvas.Left="80"
+                    Canvas.Top="25"
+                    Width="100"
+                    Click="btnRemovePlayList_Click" />
+            <Button x:Name="bthRemoveSong"
+                    Content="Remove Song"
+                    Canvas.Left="80"
+                    Canvas.Top="25"
+                    Width="100"
+                    Click="btnRemoveSong_Click" />
         </StackPanel>
     </Canvas>
+    -->
+    
 </Window>
        
