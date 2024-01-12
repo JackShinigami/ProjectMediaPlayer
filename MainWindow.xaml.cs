@@ -123,9 +123,11 @@ namespace ProjectMediaPlayer
                     if (slider.Value == mediaElement.Position.TotalSeconds)
                     {
                         loadingProgressBar.Visibility = Visibility.Visible;
+                        mediaElement.IsMuted = true;
                     }
                     else
                     {
+                        mediaElement.IsMuted = false;
                         loadingProgressBar.Visibility = Visibility.Hidden;
                     }
                     slider.Value = mediaElement.Position.TotalSeconds;
@@ -271,7 +273,7 @@ namespace ProjectMediaPlayer
                 isChangeByAuto = false;
                 return;
             }
-
+            
             mediaElement.Position = TimeSpan.FromSeconds(slider.Value);
         }
 
