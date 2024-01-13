@@ -85,14 +85,20 @@
 
         <Style x:Key="NoHoverButtonStyle" TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Width" Value="200"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
+
+
     </Window.Resources>
 
 
@@ -146,19 +152,29 @@
                     </Button>
                 </StackPanel>
 
-                <ListBox Background="White" DockPanel.Dock="Bottom" x:Name="listBox_PlayList" Height="370" ScrollViewer.HorizontalScrollBarVisibility ="Disabled">
+                <ListBox Background="White" DockPanel.Dock="Bottom" x:Name="listBox_PlayList" Height="370" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
-                                <Button Content="{Binding Name}" Height="24"
+                                <Button Background="Transparent" x:Name="btn_PlaylistName" Content="{Binding Name}" 
+                                        Height="24" Width="200"
                                         Style="{StaticResource NoHoverButtonStyle}" 
                                         PreviewMouseDoubleClick="btnPlaylist_PreviewMouseDoubleClick" 
-                                        Click="btnPlaylist_Click"/>
+                                        Click="btnPlaylist_Click">
+                                    <Button.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Remove" Click="btnRemovePlayList_Click"/>
+                                            <MenuItem Header="Rename" Click="MenuItemRename_Click"/>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                </Button>
+                                <TextBox Background="Purple" x:Name="txtBoxRename" Visibility="Collapsed" Width="200" 
+                                         Text="{Binding Name, Mode=TwoWay}" 
+                                         LostFocus="txtBoxRename_LostFocus" KeyDown="txtBoxRename_KeyDown"/>
                             </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-
 
                 <!-- Song ListBox -->
                 <ListBox Background="White" DockPanel.Dock="Bottom" Visibility="Collapsed" x:Name="listBox_Songs" 
