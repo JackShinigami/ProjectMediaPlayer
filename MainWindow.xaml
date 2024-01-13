@@ -163,16 +163,14 @@
         <!--#endregion-->
 
         <!--#region Playlist (0,2)-->
-        <Border CornerRadius="10"
-                Grid.Column="2"
-                Background="#8fe">
+        <Border Grid.Column="2" Background="#8fe">
             <DockPanel>
                 <StackPanel Name="stackpanel_PlaylistButtons"
                             DockPanel.Dock="Top">
                     <Button DockPanel.Dock="Top"
                             x:Name="bthAddPlayList"
                             Content="Add PlayList"
-                            Width="100"
+                            Width="100" Margin="0, 20, 0, 0"
                             Style="{StaticResource CustomButtonStyle}"
                             Click="btnAddPlayList_Click" />
                     <Button DockPanel.Dock="Top"
@@ -202,7 +200,7 @@
 
                 <StackPanel Name="stackpanel_PlaylistsTitle"
                             DockPanel.Dock="Top"
-                            Height="30">
+                            Height="30" Width="800">
                     <Label Name="label_PlaylistTitle"
                            DockPanel.Dock="Top"
                            Content="Playlists"
@@ -213,7 +211,7 @@
                 <StackPanel Name="stackpanel_SongsTitle"
                             DockPanel.Dock="Top"
                             Orientation="Horizontal"
-                            Height="30"
+                            Height="30" Width="800"
                             Visibility="Collapsed">
                     <Button Click="btnBack_Click"
                             Background="Transparent"
@@ -234,12 +232,13 @@
                     </Button>
                 </StackPanel>
 
-                <ListBox Background="White" DockPanel.Dock="Bottom" x:Name="listBox_PlayList" Height="370" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListBox Background="White" DockPanel.Dock="Left" x:Name="listBox_PlayList" 
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Vertical">
                                 <Button Background="Transparent" x:Name="btn_PlaylistName" Content="{Binding Name}" 
-                                        Height="24" Width="200"
+                                        Height="24" Width="800"
                                         Style="{StaticResource NoHoverButtonStyle}" 
                                         PreviewMouseDoubleClick="btnPlaylist_PreviewMouseDoubleClick" 
                                         Click="btnPlaylist_Click">
@@ -250,7 +249,8 @@
                                         </ContextMenu>
                                     </Button.ContextMenu>
                                 </Button>
-                                <TextBox Background="Purple" x:Name="txtBoxRename" Visibility="Collapsed" Width="200" 
+                                <TextBox Background="Transparent" x:Name="txtBoxRename" Visibility="Collapsed" 
+                                         Width="800" Height="24" VerticalContentAlignment="Center"
                                          Text="{Binding Name, Mode=TwoWay}" 
                                          LostFocus="txtBoxRename_LostFocus" KeyDown="txtBoxRename_KeyDown"/>
                             </StackPanel>
