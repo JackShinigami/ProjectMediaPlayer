@@ -12,8 +12,6 @@
         Closing="WindowClosing">
 
     <Window.Resources>
-        <local:FilePathToTitleConverter x:Key="FilePathToTitleConverter"/>
-
         <Style x:Key="CircularProgressBar"
                TargetType="ProgressBar">
             <Setter Property="Template">
@@ -43,165 +41,82 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <Style x:Key="CustomButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="100"/>
-            <Setter Property="Height" Value="30"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="ContentTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Background" Value="#FF333333"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Border x:Name="border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5">
-                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <Border x:Name="shadow" Background="Transparent" BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="5" Opacity="0">
-                                <Border.Effect>
-                                    <DropShadowEffect ShadowDepth="2" Direction="0" Opacity="0.5"/>
-                                </Border.Effect>
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#FF555555"/>
-                                <Setter TargetName="shadow" Property="Opacity" Value="1"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="NoHoverButtonStyle" TargetType="Button">
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
 
-    <Grid>
-        
-        <!--#region Grid 2x2-->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="5" />
-            <ColumnDefinition Width="200" />
-        </Grid.ColumnDefinitions>
+    <Border>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="100" />
-        </Grid.RowDefinitions>
-        <!--#endregion-->
+        <Border.Background>
+            <LinearGradientBrush StartPoint="0,0"
+                                 EndPoint="0,1">
+                <GradientStop Color="#FF1D1D1D"
+                              Offset="0" />
+                <GradientStop Color="#FF2B2B2B"
+                              Offset="1" />
+            </LinearGradientBrush>
+        </Border.Background>
 
-        <!--#region Main content (0,0)-->         
-        <Border Background="#123"
-            >
-            
-        </Border>        
-        <!--#endregion-->
-                
-        <!--#region Playlist (0,2)-->        
-        <Border CornerRadius="10"
-                Grid.Column="2"
-                Background="#8fe">
-            <DockPanel>
-                <StackPanel Name="stackpanel_PlaylistButtons" DockPanel.Dock="Top">
-                    <Button DockPanel.Dock="Top" x:Name="bthAddPlayList" Content="Add PlayList" Width="100" Style="{StaticResource CustomButtonStyle}" Click="btnAddPlayList_Click" />
-                    <Button DockPanel.Dock="Top" x:Name="bthRemovePlayList" Content="Remove PlayList" Width="100" Style="{StaticResource CustomButtonStyle}" Click="btnRemovePlayList_Click" />
-                </StackPanel>
+        <Grid>
 
-                <StackPanel Name="stackpanel_SongButtons" DockPanel.Dock="Top" Visibility="Collapsed">
-                    <Button DockPanel.Dock="Top" x:Name="bthAddSong" Content="Add Song" Width="100" Style="{StaticResource CustomButtonStyle}" Click="btnAddSong_Click"/>
-                    <Button DockPanel.Dock="Top" x:Name="bthRemoveSong" Content="Remove Song" Width="100" Style="{StaticResource CustomButtonStyle}" Click="btnRemoveSong_Click" />
-                </StackPanel>
+            <!--#region Grid 2x2-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="200" />
+            </Grid.ColumnDefinitions>
 
-                <StackPanel Name="stackpanel_PlaylistsTitle" DockPanel.Dock="Top" Height="30">
-                    <Label Name="label_PlaylistTitle" DockPanel.Dock="Top" Content="Playlists" FontWeight="Bold" FontSize="14"></Label>
-                </StackPanel>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+            <!--#endregion-->
 
-                <StackPanel Name="stackpanel_SongsTitle" DockPanel.Dock="Top" Orientation="Horizontal" Height="30" Visibility="Collapsed">
-                    <Button Click="btnBack_Click" Background="Transparent" BorderThickness="0" Width="200" HorizontalContentAlignment="Left">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="Assets/back.png" Margin="0,0,5,0" Width="12" Height="12" RenderOptions.BitmapScalingMode="HighQuality"/>
-                            <Label Name="label_PlaylistName" Content="Songs" FontWeight="Bold" FontSize="14"></Label>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
+            <!--#region Main content (0,0)-->
+            <Border Background="#123">
 
-                <ListBox Background="White" DockPanel.Dock="Bottom" x:Name="listBox_PlayList" Height="370" ScrollViewer.HorizontalScrollBarVisibility ="Disabled">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Vertical">
-                                <Button Content="{Binding Name}" Height="24"
-                                        Style="{StaticResource NoHoverButtonStyle}" 
-                                        PreviewMouseDoubleClick="btnPlaylist_PreviewMouseDoubleClick" 
-                                        Click="btnPlaylist_Click"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+            </Border>
+            <!--#endregion-->
+
+            <!--#region Playlist (0,2)-->
+            <Border CornerRadius="10"
+                    Grid.Column="2"
+                    Background="#8fe">
+
+            </Border>
+            <!--#endregion-->
+
+            <!--#region GridSpliter-->
+            <GridSplitter Grid.Column="1"
+                          Width="5"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ResizeBehavior="PreviousAndNext" />
+            <!--#endregion-->
+
+            <!--#region Meida bar(1,*)-->
+            <Border Grid.Row="1"
+                    Grid.ColumnSpan="3">
+
+                <Grid HorizontalAlignment="Center">
+
+                    <StackPanel Orientation="Horizontal">
+                        <ToggleButton x:Name="PlayPauseToggleButton"
+                                      Style="{StaticResource PlayPauseToggleButtonSyle}"
+                                      IsChecked="False"
+                                      Checked="PlayPauseToggleButton_Checked" />
+
+                    </StackPanel>
+
+                </Grid>
+
+            </Border>
+            <!--#endregion-->
 
 
-                <!-- Song ListBox -->
-                <ListBox Background="White" DockPanel.Dock="Bottom" Visibility="Collapsed" x:Name="listBox_Songs" 
-                         SelectionChanged="listBoxSongs_SelectionChanged" Height="370">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource FilePathToTitleConverter}}" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </DockPanel>
-        </Border>        
-        <!--#endregion-->
-        
-        <!--#region GridSpliter-->
-        <GridSplitter Grid.Column="1"
-                      Width="5"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch"
-                      ResizeBehavior="PreviousAndNext" />
-        <!--#endregion-->
+        </Grid>
+    </Border>
 
-        <!--#region Meida bar(1,*)-->        
-        <Border Grid.Row="1">
 
-            <Grid HorizontalAlignment="Center">
-
-                <StackPanel Orientation="Horizontal">
-
-                    <ToggleButton x:Name="PlayPauseToggleButton"
-                                  
-                                  Style="{StaticResource PlayPauseToggleButtonSyle}"
-                                  Checked="PlayPauseToggleButton_Checked" />
-
-                </StackPanel>
-                
-            </Grid>
-            
-        </Border>        
-        <!--#endregion-->
-    </Grid>
-    
-    
     <!--
     <Canvas>
         <Grid Canvas.Left="10"
@@ -292,7 +207,9 @@
                             <Track.Thumb>
                                 <Thumb Width="10"
                                        Height="10" />
-                                --><!-- Set the size of the Thumb here --><!--
+                                -->
+    <!-- Set the size of the Thumb here -->
+    <!--
                             </Track.Thumb>
                         </Track>
                         <Track x:Name="PART_ClickableTrack"
@@ -388,6 +305,6 @@
         </StackPanel>
     </Canvas>
     -->
-    
+
 </Window>
        
