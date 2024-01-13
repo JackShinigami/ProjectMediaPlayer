@@ -20,7 +20,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Border x:Name="ContainerBorder" Width="80" Height="80">
+                    <Border x:Name="ContainerBorder"
+                            Width="80"
+                            Height="80">
                         <Border.RenderTransform>
                             <RotateTransform Angle="0"
                                              CenterX="40"
@@ -39,7 +41,9 @@
                                     VerticalAlignment="Center">
 
                                 <Border.RenderTransform>
-                                    <RotateTransform Angle="0" CenterX="40" CenterY="40"/>
+                                    <RotateTransform Angle="0"
+                                                     CenterX="40"
+                                                     CenterY="40" />
                                 </Border.RenderTransform>
 
                                 <Path x:Name="PlayPath"
@@ -66,7 +70,7 @@
                                 <Border.RenderTransform>
                                     <RotateTransform Angle="0" />
                                 </Border.RenderTransform>
-                                
+
                                 <Path x:Name="PausePath"
                                       Margin="1 0 0 5"
                                       Fill="White"
@@ -89,7 +93,7 @@
                         </Grid>
 
                         <VisualStateManager.VisualStateGroups>
-                            
+
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="MouseOver">
@@ -112,11 +116,12 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Checked">
+                                <VisualState x:Name="Unchecked">
                                     <Storyboard>
 
                                         <DoubleAnimation Storyboard.TargetName="ContainerBorder"
                                                          Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         From="0"
                                                          To="180"
                                                          Duration="0:0:0.2" />
 
@@ -138,12 +143,13 @@
                                                          Duration="0:0:0.2" />
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Unchecked">
+                                <VisualState x:Name="Checked">
                                     <Storyboard>
 
                                         <DoubleAnimation Storyboard.TargetName="ContainerBorder"
                                                          Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
-                                                         To="0"
+                                                         From="180"
+                                                         To="360"
                                                          Duration="0:0:0.2" />
                                         <!--<DoubleAnimation Storyboard.TargetName="PlayBorder"
                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
@@ -165,9 +171,9 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        
+
                     </Border>
-                    
+
                 </ControlTemplate>
             </Setter.Value>
 
@@ -182,9 +188,9 @@
 
 
         <Setter Property="Width"
-                Value="40" />
+                Value="50" />
         <Setter Property="Height"
-                Value="40" />
+                Value="50" />
         <Setter Property="Cursor"
                 Value="Hand" />
 
@@ -210,8 +216,9 @@
                                     VerticalAlignment="Center">
 
                                 <Image Source="../Assets/shuffle.png"
-                                       Width="Auto"
-                                       Height="Auto" />
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Width="30"
+                                       Height="30" />
 
                             </Border>
 
@@ -220,8 +227,9 @@
                                     Opacity="0"
                                     VerticalAlignment="Center">
                                 <Image Source="../Assets/arrow.png"
-                                       Width="Auto"
-                                       Height="Auto" />
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Width="30"
+                                       Height="30" />
                             </Border>
 
 
@@ -251,9 +259,9 @@
                             </VisualStateGroup>
 
                             <VisualStateGroup x:Name="CheckStates">
-                                
-                                
-                                <VisualState x:Name="Checked">
+
+
+                                <VisualState x:Name="Unchecked">
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="ShuffleBorder"
                                                          Storyboard.TargetProperty="Opacity"
@@ -265,7 +273,7 @@
                                                          Duration="0:0:0.2" />
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Unchecked">
+                                <VisualState x:Name="Checked">
                                     <Storyboard>
                                         <DoubleAnimation Storyboard.TargetName="ShuffleBorder"
                                                          Storyboard.TargetProperty="Opacity"
@@ -286,9 +294,9 @@
 
 
                 </ControlTemplate>
-                
+
             </Setter.Value>
-            
+
         </Setter>
 
 
@@ -299,10 +307,10 @@
            TargetType="ToggleButton">
 
         <Setter Property="Width"
-                Value="40" />
+                Value="50" />
 
         <Setter Property="Height"
-                Value="40" />
+                Value="50" />
 
         <Setter Property="Cursor"
                 Value="Hand" />
@@ -327,8 +335,9 @@
                                     VerticalAlignment="Center">
 
                                 <Image Source="../Assets/repeat.png"
-                                       Width="Auto"
-                                       Height="Auto" />
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Width="30"
+                                       Height="30" />
 
                             </Border>
 
@@ -337,14 +346,15 @@
                                     Opacity="0"
                                     VerticalAlignment="Center">
                                 <Image Source="../Assets/repeat1.png"
-                                       Width="Auto"
-                                       Height="Auto" />
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Width="30"
+                                       Height="30" />
                             </Border>
 
                         </Grid>
 
                         <VisualStateManager.VisualStateGroups>
-                            
+
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="MouseOver">
@@ -394,7 +404,7 @@
                             </VisualStateGroup>
 
                         </VisualStateManager.VisualStateGroups>
-                        
+
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

@@ -10,16 +10,20 @@
         Width="1000"
         Loaded="WindowLoaded"
         Closing="WindowClosing">
+
+
     <Window.Resources>
         <local:FilePathToTitleConverter x:Key="FilePathToTitleConverter" />
 
         <Style x:Key="CircularProgressBar"
                TargetType="ProgressBar">
+
+
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressBar">
                         <Grid>
-                            <Ellipse Stroke="#FF01D328"
+                            <Ellipse Stroke="#aaa"
                                      StrokeThickness="10"
                                      StrokeDashArray="5">
                                 <Ellipse.Triggers>
@@ -28,7 +32,7 @@
                                             <Storyboard>
                                                 <DoubleAnimation Storyboard.TargetProperty="(Shape.StrokeDashOffset)"
                                                                  From="0"
-                                                                 To="100"
+                                                                 To="120"
                                                                  Duration="0:0:3"
                                                                  RepeatBehavior="Forever" />
                                             </Storyboard>
@@ -43,85 +47,6 @@
             </Setter>
         </Style>
 
-        <Style x:Key="CustomButtonStyle"
-               TargetType="Button">
-            <Setter Property="Width"
-                    Value="100" />
-            <Setter Property="Height"
-                    Value="30" />
-            <Setter Property="Margin"
-                    Value="5" />
-            <Setter Property="ContentTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center" />
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-            <Setter Property="Background"
-                    Value="#FF333333" />
-            <Setter Property="Foreground"
-                    Value="White" />
-            <Setter Property="BorderBrush"
-                    Value="Transparent" />
-            <Setter Property="BorderThickness"
-                    Value="1" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Grid>
-                            <Border x:Name="border"
-                                    Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="5">
-                                <ContentPresenter HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center" />
-                            </Border>
-                            <Border x:Name="shadow"
-                                    Background="Transparent"
-                                    BorderBrush="Transparent"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    CornerRadius="5"
-                                    Opacity="0">
-                                <Border.Effect>
-                                    <DropShadowEffect ShadowDepth="2"
-                                                      Direction="0"
-                                                      Opacity="0.5" />
-                                </Border.Effect>
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter TargetName="border"
-                                        Property="Background"
-                                        Value="#FF555555" />
-                                <Setter TargetName="shadow"
-                                        Property="Opacity"
-                                        Value="1" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="NoHoverButtonStyle"
-               TargetType="Button">
-            <Setter Property="OverridesDefaultStyle"
-                    Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter HorizontalAlignment="Left"
-                                          VerticalAlignment="Center" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
     <Border>
@@ -149,12 +74,32 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="100" />
+                <RowDefinition Height="120" />
             </Grid.RowDefinitions>
             <!--#endregion-->
 
             <!--#region Main content (0,0)-->
             <Border>
+
+                <Grid>
+                    <Image x:Name="imgBg_Media"
+                           Width="Auto"
+                           Height="Auto"
+                           Stretch="Uniform" />
+                    <MediaElement x:Name="mediaElement"
+                                  LoadedBehavior="Manual"
+                                  MediaOpened="mediaElement_MediaOpened"
+                                  MediaEnded="mediaElement_MediaEnded"
+                                  BufferingStarted="mediaElement_BufferingStarted"
+                                  BufferingEnded="mediaElement_BufferingEnded" />
+                    <ProgressBar x:Name="loadingProgressBar"
+                                 Style="{StaticResource CircularProgressBar}"
+                                 Visibility="Hidden"
+                                 Width="100"
+                                 Height="100" />
+
+
+                </Grid>
 
             </Border>
             <!--#endregion-->
@@ -162,7 +107,7 @@
             <!--#region Playlist (0,2)-->
             <Border CornerRadius="10"
                     Grid.Column="2"
-                    Background="#8fe">
+                    Background="#333">
                 <DockPanel>
                     <StackPanel Name="stackpanel_PlaylistButtons"
                                 DockPanel.Dock="Top">
@@ -203,8 +148,9 @@
                         <Label Name="label_PlaylistTitle"
                                DockPanel.Dock="Top"
                                Content="Playlists"
+                               Foreground="#fff"
                                FontWeight="Bold"
-                               FontSize="14"></Label>
+                               FontSize="14" />
                     </StackPanel>
 
                     <StackPanel Name="stackpanel_SongsTitle"
@@ -217,6 +163,7 @@
                                 BorderThickness="0"
                                 Width="200"
                                 HorizontalContentAlignment="Left">
+                            <!--TODO: transparent hover-->
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="Assets/back.png"
                                        Margin="0,0,5,0"
@@ -226,43 +173,51 @@
                                 <Label Name="label_PlaylistName"
                                        Content="Songs"
                                        FontWeight="Bold"
+                                       Foreground="White"
                                        FontSize="14"></Label>
                             </StackPanel>
                         </Button>
                     </StackPanel>
 
-                    <ListBox Background="White"
-                             DockPanel.Dock="Bottom"
-                             x:Name="listBox_PlayList"
-                             Height="370"
-                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Vertical">
-                                    <Button Content="{Binding Name}"
-                                            Height="24"
-                                            Style="{StaticResource NoHoverButtonStyle}"
-                                            PreviewMouseDoubleClick="btnPlaylist_PreviewMouseDoubleClick"
-                                            Click="btnPlaylist_Click" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <Grid DockPanel.Dock="Bottom"
+                          MinHeight="350">
+                        <ListBox Background="Transparent"
+                                 x:Name="listBox_PlayList"
+                                 BorderThickness="0 2 0 0"
+                                 Margin="0 0 0 5"
+                                 HorizontalAlignment="Stretch"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical">
+                                        <Button Content="{Binding Name}"
+                                                Height="24"
+                                                Foreground="White"
+                                                Style="{StaticResource NoHoverButtonStyle}"
+                                                PreviewMouseDoubleClick="btnPlaylist_PreviewMouseDoubleClick"
+                                                Click="btnPlaylist_Click" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
 
-                    <!-- Song ListBox -->
-                    <ListBox Background="White"
-                             DockPanel.Dock="Bottom"
-                             Visibility="Collapsed"
-                             x:Name="listBox_Songs"
-                             SelectionChanged="listBoxSongs_SelectionChanged"
-                             Height="370">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Converter={StaticResource FilePathToTitleConverter}}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                        <!-- Song ListBox -->
+                        <ListBox Background="Transparent"
+                                 BorderThickness="0 2 0 0"
+                                 Margin="0 0 0 15"
+                                 HorizontalAlignment="Stretch"
+                                 Visibility="Collapsed"
+                                 x:Name="listBox_Songs"
+                                 SelectionChanged="listBoxSongs_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Foreground="White"
+                                               Text="{Binding Converter={StaticResource FilePathToTitleConverter}}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
                 </DockPanel>
             </Border>
             <!--#endregion-->
@@ -277,32 +232,71 @@
             <!--#endregion-->
 
             <!--#region Meida bar(1,*)-->
+
+            <StackPanel Grid.Row="2"
+                        Margin="10 0 0 0"
+                        Width="300"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left">
+                <TextBlock x:Name="txtName"
+                           d:Text="Name"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           TextAlignment="Left"
+                           Foreground="White"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           TextWrapping="Wrap"
+                           Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="3" />
+
+                <TextBlock x:Name="txtSinger"
+                           d:Text="Singer"
+                           FontSize="12"
+                           FontStyle="Italic"
+                           TextAlignment="Left"
+                           Foreground="White"
+                           HorizontalAlignment="Left"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Top"
+                           Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="3" />
+            </StackPanel>
+
+            <!--#region Media Control Button -->
             <Border Grid.Row="1"
                     Grid.ColumnSpan="3">
 
-                <Grid HorizontalAlignment="Center">
+                <Grid HorizontalAlignment="Stretch">
 
-                    <StackPanel Orientation="Horizontal">
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
 
                         <ToggleButton x:Name="ShuffleToggleButton"
                                       Style="{StaticResource ShuffleToggleButtonStyle}"
-                                      IsChecked="False"
-                                      Checked="ShuffleToggleButton_Checked" />
+                                      Checked="ShuffleToggleButton_Checked"
+                                      Unchecked="ShuffleToggleButton_Unchecked"
+                                      IsChecked="{Binding isShuffle}" />
+
+                        <Button x:Name="PreviousButton"
+                                Style="{StaticResource PreviousButtonStyle }"
+                                Click="PreviousButton_Click" />
 
                         <ToggleButton x:Name="PlayPauseToggleButton"
                                       Style="{StaticResource PlayPauseToggleButtonStyle}"
-                                      IsChecked="False"
+                                      IsChecked="{Binding isPaused}"
+                                      d:IsChecked="False"
                                       Checked="PlayPauseToggleButton_Checked"
+                                      Unchecked="PlayPauseToggleButton_Unchecked"
                                       RenderTransformOrigin="0.5,0.5">
-                            <ToggleButton.RenderTransform>
-                                <TransformGroup>
-                                    <ScaleTransform />
-                                    <SkewTransform />
-                                    <RotateTransform Angle="0" />
-                                    <TranslateTransform />
-                                </TransformGroup>
-                            </ToggleButton.RenderTransform>
                         </ToggleButton>
+
+                        <Button x:Name="NextButton"
+                                Style="{StaticResource NextButtonStyle}"
+                                Click="NextButton_Click" />
 
                         <ToggleButton x:Name="RepeatToggleButton"
                                       Style="{StaticResource RepeatToggleButtonStyle}"
@@ -311,11 +305,172 @@
 
                     </StackPanel>
 
+                    <Slider x:Name="slider"
+                            ValueChanged="slider_ValueChanged"
+                            Maximum="100"
+                            Height="20"
+                            BorderThickness="0"
+                            Background="#666"
+                            HorizontalAlignment="Stretch"
+                            Margin="80 0 80 0"
+                            VerticalAlignment="Top">
+                        <Slider.ToolTip>
+                            <ToolTip Content="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Value, StringFormat={}{0:0.00}}" />
+                        </Slider.ToolTip>
+                        <Slider.Template>
+                            <ControlTemplate TargetType="Slider">
+                                <Grid>
+                                    <ProgressBar Value="{TemplateBinding Value}"
+                                                 Maximum="{TemplateBinding Maximum}"
+                                                 BorderThickness="{TemplateBinding BorderThickness}"
+                                                 Height="{TemplateBinding Height}"
+                                                 Foreground="#eee"
+                                                 Background="Transparent">
+
+                                        <ProgressBar.Template>
+                                            <ControlTemplate>
+
+                                                <Border x:Name="ContainerBorder">
+
+                                                    <Grid x:Name="PART_Track">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Border x:Name="BackgroundBorder"
+                                                                Grid.ColumnSpan="2"
+                                                                CornerRadius="10"
+                                                                Height="8"
+                                                                Background="#666"
+                                                                HorizontalAlignment="Stretch"
+                                                                VerticalAlignment="Stretch">
+
+
+                                                        </Border>
+
+                                                        <Border x:Name="PART_Indicator"
+                                                                Grid.Column="0"
+                                                                Background="#eee"
+                                                                CornerRadius="10 0 0 10"
+                                                                Width="12"
+                                                                Height="8"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center" />
+
+                                                        <Border x:Name="PART_SelectionRange"
+                                                                Grid.Column="1"
+                                                                Background="#eee"
+                                                                Height="8"
+                                                                CornerRadius="10 0 0 10"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Stretch" />
+
+                                                    </Grid>
+
+                                                </Border>
+
+                                                <ControlTemplate.Triggers>
+
+                                                    <EventTrigger RoutedEvent="MouseEnter">
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="BackgroundBorder"
+                                                                                 Storyboard.TargetProperty="Height"
+                                                                                 From="8"
+                                                                                 To="12"
+                                                                                 Duration="0:0:0.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                                                 Storyboard.TargetProperty="Height"
+                                                                                 From="8"
+                                                                                 To="12"
+                                                                                 Duration="0:0:0.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+
+                                                    <EventTrigger RoutedEvent="MouseLeave">
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="BackgroundBorder"
+                                                                                 Storyboard.TargetProperty="Height"
+                                                                                 From="12"
+                                                                                 To="8"
+                                                                                 Duration="0:0:0.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                                                 Storyboard.TargetProperty="Height"
+                                                                                 From="12"
+                                                                                 To="8"
+                                                                                 Duration="0:0:0.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+
+                                                </ControlTemplate.Triggers>
+
+
+                                            </ControlTemplate>
+                                        </ProgressBar.Template>
+
+                                    </ProgressBar>
+                                    <Track x:Name="PART_Track">
+                                        <Track.Thumb>
+
+                                            <Thumb>
+                                                <Thumb.Template>
+                                                    <ControlTemplate TargetType="Thumb">
+                                                        <Ellipse Fill="#fff"
+                                                                 VerticalAlignment="Center"
+                                                                 Stroke="#fff"
+                                                                 StrokeThickness="0"
+                                                                 x:Name="thumbEllipse"
+                                                                 Width="12"
+                                                                 Height="12" />
+
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver"
+                                                                     Value="True">
+                                                                <Setter Property="Width"
+                                                                        TargetName="thumbEllipse"
+                                                                        Value="18" />
+                                                                <Setter Property="Height"
+                                                                        TargetName="thumbEllipse"
+                                                                        Value="18" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Thumb.Template>
+                                            </Thumb>
+
+                                        </Track.Thumb>
+                                    </Track>
+                                    <Track x:Name="PART_ClickableTrack"
+                                           IsHitTestVisible="True">
+                                        <Track.Thumb>
+                                            <Thumb Width="0"
+                                                   Height="0"
+                                                   Background="#aaa" />
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Slider.Template>
+                    </Slider>
+
                 </Grid>
 
             </Border>
             <!--#endregion-->
 
+            <!--#endregion-->
 
         </Grid>
     </Border>
@@ -411,9 +566,7 @@
                             <Track.Thumb>
                                 <Thumb Width="10"
                                        Height="10" />
-                                -->
-    <!-- Set the size of the Thumb here -->
-    <!--
+
                             </Track.Thumb>
                         </Track>
                         <Track x:Name="PART_ClickableTrack"

@@ -34,44 +34,44 @@ namespace ProjectMediaPlayer
         public MainWindow()
         {
             InitializeComponent();
-            //// Đăng ký các phím tắt
-            //RegisterHotKey(new WindowInteropHelper(this).Handle, HOTKEY_ID_PAUSE_PLAY, 0, VK_MEDIA_PLAY_PAUSE);
-            //RegisterHotKey(new WindowInteropHelper(this).Handle, HOTKEY_ID_SKIP, 0, VK_MEDIA_NEXT_TRACK);
+            // Đăng ký các phím tắt
+            RegisterHotKey(new WindowInteropHelper(this).Handle, HOTKEY_ID_PAUSE_PLAY, 0, VK_MEDIA_PLAY_PAUSE);
+            RegisterHotKey(new WindowInteropHelper(this).Handle, HOTKEY_ID_SKIP, 0, VK_MEDIA_NEXT_TRACK);
 
 
-            //// Thêm hook để xử lý sự kiện WM_HOTKEY
-            //ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
+            // Thêm hook để xử lý sự kiện WM_HOTKEY
+            ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
         }
 
-        //private void ComponentDispatcher_ThreadPreprocessMessage(ref MSG msg, ref bool handled)
-        //{
-        //    if (msg.message == 0x0312) // WM_HOTKEY
-        //    {
-        //        int hotkeyId = msg.wParam.ToInt32();
-        //        switch (hotkeyId)
-        //        {
-        //            case HOTKEY_ID_PAUSE_PLAY:
-        //                if(isPaused)
-        //                {
-        //                    btnPlay_Click(null, null);
-        //                }
-        //                else
-        //                {
-        //                    btnPause_Click(null, null);
-        //                }
-        //                break;
-        //            case HOTKEY_ID_SKIP:
-        //                NextMediaFile();
-        //                break;
-        //        }
-        //    }
-        //}
+        private void ComponentDispatcher_ThreadPreprocessMessage(ref MSG msg, ref bool handled)
+        {
+            if (msg.message == 0x0312) // WM_HOTKEY
+            {
+                int hotkeyId = msg.wParam.ToInt32();
+                switch (hotkeyId)
+                {
+                    case HOTKEY_ID_PAUSE_PLAY:
+                        if (isPaused)
+                        {
+                            PlayPauseToggleButton_Checked(null, null);
+                        } else
+                        {
+                            PlayPauseToggleButton_Unchecked(null, null);
+                        }
+                        break;
+                    case HOTKEY_ID_SKIP:
+                        NextMediaFile();
+                        break;
+                }
+            }
+        }
 
         List<string> mediaFileNames = new List<string>(); // Danh sách các file được chọn
         int currentMediaIndex = 0; // Chỉ số của file đang được chọn
         bool isPaused = false;
         bool isShuffle = false;
         bool isChangeByAuto = false;
+        bool isRepeatOne = false;
         private const int HOTKEY_ID_PAUSE_PLAY = 9000;
         private const int HOTKEY_ID_SKIP = 9001;
 
@@ -82,10 +82,10 @@ namespace ProjectMediaPlayer
 
 
 
-        //DispatcherTimer timer = new DispatcherTimer()
-        //{
-        //    Interval = TimeSpan.FromSeconds(1)
-        //};
+        DispatcherTimer timer = new DispatcherTimer()
+        {
+            Interval = TimeSpan.FromSeconds(0.1)
+        };
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
@@ -97,7 +97,7 @@ namespace ProjectMediaPlayer
             //{
             //    listBox_PlayList.SelectedIndex = 0;
             //}
-
+            isPaused = false;
             string lastPlayListID = DataManager.Instance.LastPlayListID();
             string lastSongFileName = DataManager.Instance.LastSongFileName();
             double lastSongPosition = DataManager.Instance.LastSongPosition();
@@ -114,88 +114,87 @@ namespace ProjectMediaPlayer
                 {
                     listBox_Songs.SelectedIndex = mediaFileNames.FindIndex(x => x == lastSongFileName);
                     currentMediaIndex = listBox_Songs.SelectedIndex;
-                    //UpdateUI(mediaFileNames[currentMediaIndex]);
-                    //slider.Value = lastSongPosition;
+                    UpdateUI(mediaFileNames[currentMediaIndex]);
+                    slider.Value = lastSongPosition;
                 }
             }
 
-            //timer.Tick += (s, e) =>
-            //{
-            //    if (mediaElement.NaturalDuration.HasTimeSpan)
-            //    {
-            //        // Update the slider value
-            //        isChangeByAuto = true;
-            //        if (slider.Value == mediaElement.Position.TotalSeconds)
-            //        {
-            //            loadingProgressBar.Visibility = Visibility.Visible;
-            //        }
-            //        else
-            //        {
-            //            loadingProgressBar.Visibility = Visibility.Hidden;
-            //        }
-            //        slider.Value = mediaElement.Position.TotalSeconds;
-            //    }
-            //};
+            timer.Tick += (s, e) =>
+            {
+                if (mediaElement.NaturalDuration.HasTimeSpan)
+                {
+                    // Update the slider value
+                    isChangeByAuto = true;
+                    if (slider.Value == mediaElement.Position.TotalSeconds)
+                    {
+                        loadingProgressBar.Visibility = Visibility.Visible;
+                    } else
+                    {
+                        loadingProgressBar.Visibility = Visibility.Hidden;
+                    }
+                    slider.Value = mediaElement.Position.TotalSeconds;
+                }
+            };
         }
 
-        //private void WindowClosing(object sender, CancelEventArgs e)
-        //{
-        //    PlayList playList = listBox_PlayList.SelectedItem as PlayList;
-        //    string fileName = listBox_Songs.SelectedItem as string;
+        private void WindowClosing(object sender, CancelEventArgs e)
+        {
+            PlayList playList = listBox_PlayList.SelectedItem as PlayList;
+            string fileName = listBox_Songs.SelectedItem as string;
 
-        //    if (playList != null && fileName != null)
-        //    {
-        //        DataManager dataManager = DataManager.Instance;
-        //        dataManager.UpdateLastPlayListID(playList.ID);
-        //        dataManager.UpdateLastSongFileName(fileName);
-        //        dataManager.UpdateLastSongPosition(mediaElement.Position.TotalSeconds);
-        //    }
+            if (playList != null && fileName != null)
+            {
+                DataManager dataManager = DataManager.Instance;
+                dataManager.UpdateLastPlayListID(playList.ID);
+                dataManager.UpdateLastSongFileName(fileName);
+                dataManager.UpdateLastSongPosition(mediaElement.Position.TotalSeconds);
+            }
 
-        //    // Hủy đăng ký các phím tắt
-        //    UnregisterHotKey(new WindowInteropHelper(this).Handle, HOTKEY_ID_PAUSE_PLAY);
-        //    UnregisterHotKey(new WindowInteropHelper(this).Handle, HOTKEY_ID_SKIP);
-        //}
+            // Hủy đăng ký các phím tắt
+            UnregisterHotKey(new WindowInteropHelper(this).Handle, HOTKEY_ID_PAUSE_PLAY);
+            UnregisterHotKey(new WindowInteropHelper(this).Handle, HOTKEY_ID_SKIP);
+        }
 
-        //public BitmapImage LoadImage(byte[] imageData)
-        //{
-        //    if (imageData == null || imageData.Length == 0) return null;
-        //    var image = new BitmapImage();
-        //    using (var mem = new MemoryStream(imageData))
-        //    {
-        //        mem.Position = 0;
-        //        image.BeginInit();
-        //        image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
-        //        image.CacheOption = BitmapCacheOption.OnLoad;
-        //        image.UriSource = null;
-        //        image.StreamSource = mem;
-        //        image.EndInit();
-        //    }
-        //    image.Freeze();
-        //    return image;
-        //}
+        public BitmapImage LoadImage(byte[] imageData)
+        {
+            if (imageData == null || imageData.Length == 0) return null;
+            var image = new BitmapImage();
+            using (var mem = new MemoryStream(imageData))
+            {
+                mem.Position = 0;
+                image.BeginInit();
+                image.CreateOptions = BitmapCreateOptions.PreservePixelFormat;
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.UriSource = null;
+                image.StreamSource = mem;
+                image.EndInit();
+            }
+            image.Freeze();
+            return image;
+        }
 
         private void UpdateUI(String fileName)
         {
-            //try
-            //{
-            //    mediaElement.Source = new Uri(fileName);
-            //    var file = TagLib.File.Create(fileName);
-            //    txtName.Text = file.Tag.Title;
-            //    txtSinger.Text = file.Tag.FirstPerformer;
-            //    if (file.Tag.Pictures.Length >= 1)
-            //    {
-            //        var bin = (byte[])(file.Tag.Pictures[0].Data.Data);
-            //        imgBg_Media.Source = LoadImage(bin);
-            //    }
-            //    mediaElement.Play();
-            //    timer.Start();
-            //    slider.Value = 0;
-            //}
-            //catch (Exception e)
-            //{
-            //    MessageBox.Show("File không hợp lệ");
-            //    btnRemoveSong_Click(null, null);
-            //}
+            try
+            {
+                mediaElement.Source = new Uri(fileName);
+                var file = TagLib.File.Create(fileName);
+                txtName.Text = file.Tag.Title;
+                txtSinger.Text = file.Tag.FirstPerformer;
+                if (file.Tag.Pictures.Length >= 1)
+                {
+                    var bin = (byte[])(file.Tag.Pictures[0].Data.Data);
+                    imgBg_Media.Source = LoadImage(bin);
+                }
+                mediaElement.Play();
+                timer.Start();
+                slider.Value = 0;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("File không hợp lệ");
+                btnRemoveSong_Click(null, null);
+            }
         }
 
         private List<string> SelectMediaFiles()
@@ -214,54 +213,36 @@ namespace ProjectMediaPlayer
             return new List<string>(); // Trả về danh sách rỗng nếu không có file nào được chọn
         }
 
-        //private void mediaElement_MediaOpened(object sender, RoutedEventArgs e)
-        //{
-        //    slider.Maximum = mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
-        //    slider.IsEnabled = true;
-        //    timer.Start();
-        //}
-        //private void mediaElement_MediaEnded(object sender, RoutedEventArgs e)
-        //{
-        //    slider.IsEnabled = false;
-        //    slider.Value = 0;
-        //    NextMediaFile();
-        //}
 
-        //private void mediaElement_BufferingStarted(object sender, RoutedEventArgs e)
-        //{
-        //    loadingProgressBar.Visibility = Visibility.Visible;
-        //}
+        private void mediaElement_MediaOpened(object sender, RoutedEventArgs e)
+        {
+            slider.Maximum = mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+            slider.IsEnabled = true;
+            timer.Start();
+        }
+        private void mediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            slider.IsEnabled = false;
+            slider.Value = 0;
+            if (isRepeatOne)
+            {
+                mediaElement.Position = TimeSpan.FromSeconds(0);
+                mediaElement.Play();
+                return;
+            }
+            NextMediaFile();
+        }
 
-        //private void mediaElement_BufferingEnded(object sender, RoutedEventArgs e)
-        //{
-        //    loadingProgressBar.Visibility = Visibility.Hidden;
-        //}
+        private void mediaElement_BufferingStarted(object sender, RoutedEventArgs e)
+        {
+            loadingProgressBar.Visibility = Visibility.Visible;
+        }
 
-        //private void btnPlay_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if(mediaFileNames.Count == 0)
-        //    {
-        //        MessageBox.Show("Chưa chọn file");
-        //        return;
-        //    }
+        private void mediaElement_BufferingEnded(object sender, RoutedEventArgs e)
+        {
+            loadingProgressBar.Visibility = Visibility.Hidden;
+        }
 
-        //    if(isPaused)
-        //    {
-        //        mediaElement.Play();
-        //        timer.Start();
-        //        isPaused = false;
-        //        return;
-        //    }
-
-        //    mediaElement.Play();
-        //}
-
-        //private void btnPause_Click(object sender, RoutedEventArgs e)
-        //{
-        //    mediaElement.Pause();
-        //    timer.Stop();
-        //    isPaused = true;
-        //}
 
         //private void btnStop_Click(object sender, RoutedEventArgs e)
         //{
@@ -269,90 +250,72 @@ namespace ProjectMediaPlayer
         //    timer.Stop();
         //}
 
-        //private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        //{
-        //    if (isChangeByAuto)
-        //    {
-        //        isChangeByAuto = false;
-        //        return;
-        //    }
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (isChangeByAuto)
+            {
+                isChangeByAuto = false;
+                return;
+            }
 
-        //    mediaElement.Position = TimeSpan.FromSeconds(slider.Value);
-        //}
+            mediaElement.Position = TimeSpan.FromSeconds(slider.Value);
+        }
 
-        //private void btnNext_Click(object sender, RoutedEventArgs e)
-        //{ 
-        //    NextMediaFile();
-        //}
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+            NextMediaFile();
+        }
 
-        //private void NextMediaFile()
-        //{
-        //    if(mediaFileNames.Count == 0)
-        //    {
-        //        MessageBox.Show("Chưa chọn file");
-        //        return;
-        //    }
-        //    if (isShuffle)
-        //    {
-        //        currentMediaIndex = GetNextRandomIndex();
-        //    }
-        //    else
-        //    {
-        //        if (currentMediaIndex == mediaFileNames.Count - 1)
-        //        {
-        //            currentMediaIndex = 0;
-        //        }
-        //        else
-        //        {
-        //            currentMediaIndex++;
-        //        }
-        //    }
-        //    listBox_Songs.SelectedIndex = currentMediaIndex;
-        //    mediaElement.Play();
-        //    isPaused = false;
-        //    slider.Value = 0;
-        //}
+        private void NextMediaFile()
+        {
+            if (mediaFileNames.Count == 0)
+            {
+                MessageBox.Show("Chưa chọn file");
+                return;
+            }
+            if (isShuffle)
+            {
+                currentMediaIndex = GetNextRandomIndex();
+            } else
+            {
+                if (currentMediaIndex == mediaFileNames.Count - 1)
+                {
+                    currentMediaIndex = 0;
+                } else
+                {
+                    currentMediaIndex++;
+                }
+            }
+            listBox_Songs.SelectedIndex = currentMediaIndex;
+            mediaElement.Play();
+            slider.Value = 0;
+        }
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
 
-        //private void btnPrevious_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (mediaFileNames.Count == 0)
-        //    {
-        //        MessageBox.Show("Chưa chọn file");
-        //        return;
-        //    }
+            if (mediaFileNames.Count == 0)
+            {
+                MessageBox.Show("Chưa chọn file");
+                return;
+            }
 
-        //    if (currentMediaIndex == 0)
-        //    {
-        //        currentMediaIndex = mediaFileNames.Count - 1;
-        //    }
-        //    else
-        //    {
-        //        currentMediaIndex--;
-        //    }
-        //    listBox_Songs.SelectedIndex = currentMediaIndex;
-        //    mediaElement.Play();
-        //    isPaused = false;
-        //}
+            if (currentMediaIndex == 0)
+            {
+                currentMediaIndex = mediaFileNames.Count - 1;
+            } else
+            {
+                currentMediaIndex--;
+            }
+            listBox_Songs.SelectedIndex = currentMediaIndex;
+            mediaElement.Play();
+        }
 
-        //private void btnShuffle_Click(object sender, RoutedEventArgs e)
-        //{
-        //    isShuffle = !isShuffle;
-        //    if(isShuffle)
-        //    {
-        //        btnShuffle.Background = Brushes.LightBlue;
-        //    }
-        //    else
-        //    {
-        //        btnShuffle.Background = Brushes.LightGray;
-        //    }
-        //}
-
-        //private int GetNextRandomIndex()
-        //{
-        //    Random random = new Random();
-        //    int index = random.Next(0, mediaFileNames.Count);
-        //    return index;
-        //}
+        private int GetNextRandomIndex()
+        {
+            Random random = new Random();
+            int index = random.Next(0, mediaFileNames.Count);
+            return index;
+        }
 
         private void listBoxSongs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -465,16 +428,44 @@ namespace ProjectMediaPlayer
             }
         }
 
-        private void WindowClosing(object sender, CancelEventArgs e)
-        {
-
-        }
-
+        #region Play/pause 
+        /// <summary>
+        /// Checked = Pause
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PlayPauseToggleButton_Checked(object sender, RoutedEventArgs e)
         {
-
-
+            mediaElement.Pause();
+            timer.Stop();
+            isPaused = true;
         }
+        
+        /// <summary>
+        /// Unchecked = Play
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PlayPauseToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+
+            if (mediaFileNames.Count == 0)
+            {
+                MessageBox.Show("Chưa chọn file");
+                return;
+            }
+
+            if (isPaused)
+            {
+                mediaElement.Play();
+                timer.Start();
+                isPaused = false;
+                return;
+            }
+
+            mediaElement.Play();
+        }
+        #endregion
 
         private void btnBack_Click(object sender, RoutedEventArgs e)
         {
@@ -531,12 +522,22 @@ namespace ProjectMediaPlayer
 
         private void RepeatToggleButton_Checked(object sender, RoutedEventArgs e)
         {
+            isRepeatOne = RepeatToggleButton.IsChecked!.Value;
+        }
 
+        private void RepeatToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            isRepeatOne = RepeatToggleButton.IsChecked!.Value;
         }
 
         private void ShuffleToggleButton_Checked(object sender, RoutedEventArgs e)
         {
+            isShuffle = ShuffleToggleButton.IsChecked!.Value;
+        }
 
+        private void ShuffleToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            isShuffle = ShuffleToggleButton.IsChecked!.Value;
         }
     }
 }
