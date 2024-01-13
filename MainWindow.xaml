@@ -143,7 +143,7 @@
         <!--#region Grid 2x2-->
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="5" />
+            <ColumnDefinition Width="2" />
             <ColumnDefinition Width="200" />
         </Grid.ColumnDefinitions>
 
@@ -269,7 +269,8 @@
 
         <!--#region GridSpliter-->
         <GridSplitter Grid.Column="1"
-                      Width="5"
+                      Width="2"
+                      Background="Transparent"
                       HorizontalAlignment="Stretch"
                       VerticalAlignment="Stretch"
                       ResizeBehavior="PreviousAndNext" />
