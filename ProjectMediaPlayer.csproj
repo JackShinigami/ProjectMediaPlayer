@@ -10,7 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\arrow.png" />
     <None Remove="Assets\back.png" />
+    <None Remove="Assets\repeat.png" />
+    <None Remove="Assets\repeat1.png" />
+    <None Remove="Assets\shuffle.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,9 +27,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\arrow.png" />
     <Resource Include="Assets\back.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\repeat.png" />
+    <Resource Include="Assets\repeat1.png" />
+    <Resource Include="Assets\shuffle.png" />
   </ItemGroup>
 
 </Project>

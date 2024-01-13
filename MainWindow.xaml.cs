@@ -528,5 +528,15 @@ namespace ProjectMediaPlayer
             }
             e.Handled = true; 
         }
+
+        private void RepeatToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ShuffleToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

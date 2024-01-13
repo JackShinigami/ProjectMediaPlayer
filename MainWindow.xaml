@@ -140,163 +140,184 @@
 
         <Grid>
 
-        <!--#region Grid 2x2-->
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="2" />
-            <ColumnDefinition Width="200" />
-        </Grid.ColumnDefinitions>
+            <!--#region Grid 2x2-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2" />
+                <ColumnDefinition Width="200" />
+            </Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="100" />
-        </Grid.RowDefinitions>
-        <!--#endregion-->
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+            <!--#endregion-->
 
-        <!--#region Main content (0,0)-->
-        <Border>
+            <!--#region Main content (0,0)-->
+            <Border>
 
-        </Border>
-        <!--#endregion-->
+            </Border>
+            <!--#endregion-->
 
-        <!--#region Playlist (0,2)-->
-        <Border CornerRadius="10"
-                Grid.Column="2"
-                Background="#8fe">
-            <DockPanel>
-                <StackPanel Name="stackpanel_PlaylistButtons"
-                            DockPanel.Dock="Top">
-                    <Button DockPanel.Dock="Top"
-                            x:Name="bthAddPlayList"
-                            Content="Add PlayList"
-                            Width="100"
-                            Style="{StaticResource CustomButtonStyle}"
-                            Click="btnAddPlayList_Click" />
-                    <Button DockPanel.Dock="Top"
-                            x:Name="bthRemovePlayList"
-                            Content="Remove PlayList"
-                            Width="100"
-                            Style="{StaticResource CustomButtonStyle}"
-                            Click="btnRemovePlayList_Click" />
-                </StackPanel>
+            <!--#region Playlist (0,2)-->
+            <Border CornerRadius="10"
+                    Grid.Column="2"
+                    Background="#8fe">
+                <DockPanel>
+                    <StackPanel Name="stackpanel_PlaylistButtons"
+                                DockPanel.Dock="Top">
+                        <Button DockPanel.Dock="Top"
+                                x:Name="bthAddPlayList"
+                                Content="Add PlayList"
+                                Width="100"
+                                Style="{StaticResource CustomButtonStyle}"
+                                Click="btnAddPlayList_Click" />
+                        <Button DockPanel.Dock="Top"
+                                x:Name="bthRemovePlayList"
+                                Content="Remove PlayList"
+                                Width="100"
+                                Style="{StaticResource CustomButtonStyle}"
+                                Click="btnRemovePlayList_Click" />
+                    </StackPanel>
 
-                <StackPanel Name="stackpanel_SongButtons"
-                            DockPanel.Dock="Top"
-                            Visibility="Collapsed">
-                    <Button DockPanel.Dock="Top"
-                            x:Name="bthAddSong"
-                            Content="Add Song"
-                            Width="100"
-                            Style="{StaticResource CustomButtonStyle}"
-                            Click="btnAddSong_Click" />
-                    <Button DockPanel.Dock="Top"
-                            x:Name="bthRemoveSong"
-                            Content="Remove Song"
-                            Width="100"
-                            Style="{StaticResource CustomButtonStyle}"
-                            Click="btnRemoveSong_Click" />
-                </StackPanel>
+                    <StackPanel Name="stackpanel_SongButtons"
+                                DockPanel.Dock="Top"
+                                Visibility="Collapsed">
+                        <Button DockPanel.Dock="Top"
+                                x:Name="bthAddSong"
+                                Content="Add Song"
+                                Width="100"
+                                Style="{StaticResource CustomButtonStyle}"
+                                Click="btnAddSong_Click" />
+                        <Button DockPanel.Dock="Top"
+                                x:Name="bthRemoveSong"
+                                Content="Remove Song"
+                                Width="100"
+                                Style="{StaticResource CustomButtonStyle}"
+                                Click="btnRemoveSong_Click" />
+                    </StackPanel>
 
-                <StackPanel Name="stackpanel_PlaylistsTitle"
-                            DockPanel.Dock="Top"
-                            Height="30">
-                    <Label Name="label_PlaylistTitle"
-                           DockPanel.Dock="Top"
-                           Content="Playlists"
-                           FontWeight="Bold"
-                           FontSize="14"></Label>
-                </StackPanel>
+                    <StackPanel Name="stackpanel_PlaylistsTitle"
+                                DockPanel.Dock="Top"
+                                Height="30">
+                        <Label Name="label_PlaylistTitle"
+                               DockPanel.Dock="Top"
+                               Content="Playlists"
+                               FontWeight="Bold"
+                               FontSize="14"></Label>
+                    </StackPanel>
 
-                <StackPanel Name="stackpanel_SongsTitle"
-                            DockPanel.Dock="Top"
-                            Orientation="Horizontal"
-                            Height="30"
-                            Visibility="Collapsed">
-                    <Button Click="btnBack_Click"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Width="200"
-                            HorizontalContentAlignment="Left">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Source="Assets/back.png"
-                                   Margin="0,0,5,0"
-                                   Width="12"
-                                   Height="12"
-                                   RenderOptions.BitmapScalingMode="HighQuality" />
-                            <Label Name="label_PlaylistName"
-                                   Content="Songs"
-                                   FontWeight="Bold"
-                                   FontSize="14"></Label>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-
-                <ListBox Background="White"
-                         DockPanel.Dock="Bottom"
-                         x:Name="listBox_PlayList"
-                         Height="370"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Vertical">
-                                <Button Content="{Binding Name}"
-                                        Height="24"
-                                        Style="{StaticResource NoHoverButtonStyle}"
-                                        PreviewMouseDoubleClick="btnPlaylist_PreviewMouseDoubleClick"
-                                        Click="btnPlaylist_Click" />
+                    <StackPanel Name="stackpanel_SongsTitle"
+                                DockPanel.Dock="Top"
+                                Orientation="Horizontal"
+                                Height="30"
+                                Visibility="Collapsed">
+                        <Button Click="btnBack_Click"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Width="200"
+                                HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Assets/back.png"
+                                       Margin="0,0,5,0"
+                                       Width="12"
+                                       Height="12"
+                                       RenderOptions.BitmapScalingMode="HighQuality" />
+                                <Label Name="label_PlaylistName"
+                                       Content="Songs"
+                                       FontWeight="Bold"
+                                       FontSize="14"></Label>
                             </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                        </Button>
+                    </StackPanel>
+
+                    <ListBox Background="White"
+                             DockPanel.Dock="Bottom"
+                             x:Name="listBox_PlayList"
+                             Height="370"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical">
+                                    <Button Content="{Binding Name}"
+                                            Height="24"
+                                            Style="{StaticResource NoHoverButtonStyle}"
+                                            PreviewMouseDoubleClick="btnPlaylist_PreviewMouseDoubleClick"
+                                            Click="btnPlaylist_Click" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
 
 
-                <!-- Song ListBox -->
-                <ListBox Background="White"
-                         DockPanel.Dock="Bottom"
-                         Visibility="Collapsed"
-                         x:Name="listBox_Songs"
-                         SelectionChanged="listBoxSongs_SelectionChanged"
-                         Height="370">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource FilePathToTitleConverter}}" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </DockPanel>
-        </Border>
-        <!--#endregion-->
+                    <!-- Song ListBox -->
+                    <ListBox Background="White"
+                             DockPanel.Dock="Bottom"
+                             Visibility="Collapsed"
+                             x:Name="listBox_Songs"
+                             SelectionChanged="listBoxSongs_SelectionChanged"
+                             Height="370">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource FilePathToTitleConverter}}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </DockPanel>
+            </Border>
+            <!--#endregion-->
 
-        <!--#region GridSpliter-->
-        <GridSplitter Grid.Column="1"
-                      Width="2"
-                      Background="Transparent"
-                      HorizontalAlignment="Stretch"
-                      VerticalAlignment="Stretch"
-                      ResizeBehavior="PreviousAndNext" />
-        <!--#endregion-->
+            <!--#region GridSpliter-->
+            <GridSplitter Grid.Column="1"
+                          Width="2"
+                          Background="Transparent"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ResizeBehavior="PreviousAndNext" />
+            <!--#endregion-->
 
-        <!--#region Meida bar(1,*)-->
-        <Border Grid.Row="1"
-                Grid.ColumnSpan="3">
+            <!--#region Meida bar(1,*)-->
+            <Border Grid.Row="1"
+                    Grid.ColumnSpan="3">
 
-            <Grid HorizontalAlignment="Center">
+                <Grid HorizontalAlignment="Center">
 
-                <StackPanel Orientation="Horizontal">
-                    <ToggleButton x:Name="PlayPauseToggleButton"
-                                  Style="{StaticResource PlayPauseToggleButtonSyle}"
-                                  IsChecked="False"
-                                  Checked="PlayPauseToggleButton_Checked" />
+                    <StackPanel Orientation="Horizontal">
 
-                </StackPanel>
+                        <ToggleButton x:Name="ShuffleToggleButton"
+                                      Style="{StaticResource ShuffleToggleButtonStyle}"
+                                      IsChecked="False"
+                                      Checked="ShuffleToggleButton_Checked" />
 
-            </Grid>
+                        <ToggleButton x:Name="PlayPauseToggleButton"
+                                      Style="{StaticResource PlayPauseToggleButtonStyle}"
+                                      IsChecked="False"
+                                      Checked="PlayPauseToggleButton_Checked"
+                                      RenderTransformOrigin="0.5,0.5">
+                            <ToggleButton.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform Angle="0" />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </ToggleButton.RenderTransform>
+                        </ToggleButton>
 
-        </Border>
-        <!--#endregion-->
+                        <ToggleButton x:Name="RepeatToggleButton"
+                                      Style="{StaticResource RepeatToggleButtonStyle}"
+                                      IsChecked="False"
+                                      Checked="RepeatToggleButton_Checked" />
+
+                    </StackPanel>
+
+                </Grid>
+
+            </Border>
+            <!--#endregion-->
 
 
-    </Grid>
+        </Grid>
     </Border>
 
 

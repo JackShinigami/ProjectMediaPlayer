@@ -2,9 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 
-
-
-    <Style x:Key="PlayPauseToggleButtonSyle"
+    <Style x:Key="PlayPauseToggleButtonStyle"
            TargetType="ToggleButton">
 
         <Setter Property="Width"
@@ -22,7 +20,12 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ToggleButton">
-                    <Border x:Name="ContainerBorder">
+                    <Border x:Name="ContainerBorder" Width="80" Height="80">
+                        <Border.RenderTransform>
+                            <RotateTransform Angle="0"
+                                             CenterX="40"
+                                             CenterY="40" />
+                        </Border.RenderTransform>
                         <Grid>
                             <Border x:Name="Ellipse"
                                     VerticalAlignment="Stretch"
@@ -34,6 +37,11 @@
                                     x:Name="PlayBorder"
                                     Opacity="1"
                                     VerticalAlignment="Center">
+
+                                <Border.RenderTransform>
+                                    <RotateTransform Angle="0" CenterX="40" CenterY="40"/>
+                                </Border.RenderTransform>
+
                                 <Path x:Name="PlayPath"
                                       Margin="10 0 0 5"
                                       Fill="White"
@@ -53,6 +61,12 @@
                                     x:Name="PauseBorder"
                                     Opacity="0"
                                     VerticalAlignment="Center">
+
+
+                                <Border.RenderTransform>
+                                    <RotateTransform Angle="0" />
+                                </Border.RenderTransform>
+                                
                                 <Path x:Name="PausePath"
                                       Margin="1 0 0 5"
                                       Fill="White"
@@ -100,14 +114,20 @@
                             <VisualStateGroup x:Name="CheckStates">
                                 <VisualState x:Name="Checked">
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="PlayBorder"
+
+                                        <DoubleAnimation Storyboard.TargetName="ContainerBorder"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="180"
+                                                         Duration="0:0:0.2" />
+
+                                        <!--<DoubleAnimation Storyboard.TargetName="PlayBorder"
                                                          Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
                                                          To="180"
                                                          Duration="0:0:0.2" />
                                         <DoubleAnimation Storyboard.TargetName="PauseBorder"
-                                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
                                                          To="180"
-                                                         Duration="0:0:0.2" />
+                                                         Duration="0:0:0.2" />-->
                                         <DoubleAnimation Storyboard.TargetName="PlayBorder"
                                                          Storyboard.TargetProperty="Opacity"
                                                          To="0"
@@ -120,14 +140,19 @@
                                 </VisualState>
                                 <VisualState x:Name="Unchecked">
                                     <Storyboard>
-                                        <DoubleAnimation Storyboard.TargetName="PlayBorder"
+
+                                        <DoubleAnimation Storyboard.TargetName="ContainerBorder"
+                                                         Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                                                         To="0"
+                                                         Duration="0:0:0.2" />
+                                        <!--<DoubleAnimation Storyboard.TargetName="PlayBorder"
                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
                                                          To="360"
                                                          Duration="0:0:0.2" />
                                         <DoubleAnimation Storyboard.TargetName="PauseBorder"
                                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
                                                          To="360"
-                                                         Duration="0:0:0.2" />
+                                                         Duration="0:0:0.2" />-->
                                         <DoubleAnimation Storyboard.TargetName="PlayBorder"
                                                          Storyboard.TargetProperty="Opacity"
                                                          To="1"
@@ -152,5 +177,232 @@
 
     </Style>
 
+    <Style x:Key="ShuffleToggleButtonStyle"
+           TargetType="ToggleButton">
+
+
+        <Setter Property="Width"
+                Value="40" />
+        <Setter Property="Height"
+                Value="40" />
+        <Setter Property="Cursor"
+                Value="Hand" />
+
+        <Setter Property="Template">
+
+            <Setter.Value>
+
+                <ControlTemplate TargetType="ToggleButton">
+
+
+                    <Border x:Name="ContainerBorder"
+                            Background="#0000">
+                        <Grid>
+                            <Border x:Name="Ellipse"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Stretch"
+                                    CornerRadius="100"
+                                    Background="#0000" />
+
+                            <Border HorizontalAlignment="Center"
+                                    x:Name="ShuffleBorder"
+                                    Opacity="1"
+                                    VerticalAlignment="Center">
+
+                                <Image Source="../Assets/shuffle.png"
+                                       Width="Auto"
+                                       Height="Auto" />
+
+                            </Border>
+
+                            <Border HorizontalAlignment="Center"
+                                    x:Name="ArrowBorder"
+                                    Opacity="0"
+                                    VerticalAlignment="Center">
+                                <Image Source="../Assets/arrow.png"
+                                       Width="Auto"
+                                       Height="Auto" />
+                            </Border>
+
+
+                        </Grid>
+
+                        <VisualStateManager.VisualStateGroups>
+
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="Ellipse"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        To="#333"
+                                                        Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="Ellipse"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        To="#888"
+                                                        Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="CheckStates">
+                                
+                                
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ShuffleBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0:0:0.2" />
+                                        <DoubleAnimation Storyboard.TargetName="ArrowBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="ShuffleBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0.2" />
+                                        <DoubleAnimation Storyboard.TargetName="ArrowBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+
+                            </VisualStateGroup>
+
+                        </VisualStateManager.VisualStateGroups>
+
+                    </Border>
+
+
+                </ControlTemplate>
+                
+            </Setter.Value>
+            
+        </Setter>
+
+
+
+    </Style>
+
+    <Style x:Key="RepeatToggleButtonStyle"
+           TargetType="ToggleButton">
+
+        <Setter Property="Width"
+                Value="40" />
+
+        <Setter Property="Height"
+                Value="40" />
+
+        <Setter Property="Cursor"
+                Value="Hand" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+
+                <ControlTemplate TargetType="ToggleButton">
+
+                    <Border x:Name="ContainerBorder"
+                            Background="#0000">
+                        <Grid>
+                            <Border x:Name="Ellipse"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Stretch"
+                                    CornerRadius="100"
+                                    Background="#0000" />
+
+                            <Border HorizontalAlignment="Center"
+                                    x:Name="RepeatBorder"
+                                    Opacity="1"
+                                    VerticalAlignment="Center">
+
+                                <Image Source="../Assets/repeat.png"
+                                       Width="Auto"
+                                       Height="Auto" />
+
+                            </Border>
+
+                            <Border HorizontalAlignment="Center"
+                                    x:Name="RepeatOneBorder"
+                                    Opacity="0"
+                                    VerticalAlignment="Center">
+                                <Image Source="../Assets/repeat1.png"
+                                       Width="Auto"
+                                       Height="Auto" />
+                            </Border>
+
+                        </Grid>
+
+                        <VisualStateManager.VisualStateGroups>
+                            
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="Ellipse"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        To="#333"
+                                                        Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="Ellipse"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        To="#888"
+                                                        Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="RepeatBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0:0:0.2" />
+                                        <DoubleAnimation Storyboard.TargetName="RepeatOneBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="RepeatBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0.2" />
+                                        <DoubleAnimation Storyboard.TargetName="RepeatOneBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+
+                        </VisualStateManager.VisualStateGroups>
+                        
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+
+
+
+    </Style>
 
 </ResourceDictionary>
