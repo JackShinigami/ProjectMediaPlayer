@@ -67,6 +67,7 @@ namespace ProjectMediaPlayer
         bool isChangeByAuto = false;
         bool isRepeatOne = false;
         bool isMuted = false;
+        bool isLoading = false;
         private const int HOTKEY_ID_PAUSE_PLAY = 9000;
         private const int HOTKEY_ID_SKIP = 9001;
 
@@ -130,11 +131,16 @@ namespace ProjectMediaPlayer
                     if (slider.Value == mediaElement.Position.TotalSeconds)
                     {
                         loadingProgressBar.Visibility = Visibility.Visible;
+                        isLoading = true;
                         mediaElement.IsMuted = true;
                     }
                     else
                     {
-                        mediaElement.IsMuted = false;
+                        if(isLoading)
+                        {
+                            mediaElement.IsMuted = false;
+                            isLoading = false;
+                        }
                         loadingProgressBar.Visibility = Visibility.Hidden;
                     }
                     slider.Value = mediaElement.Position.TotalSeconds;
