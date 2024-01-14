@@ -5,20 +5,38 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ProjectMediaPlayer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="600" Width="1000" Loaded="WindowLoaded" Closing="WindowClosing">
+        Title="MainWindow"
+        Height="600"
+        Width="1000"
+        Loaded="WindowLoaded"
+        Closing="WindowClosing">
+
 
     <Window.Resources>
-        <Style x:Key="CircularProgressBar" TargetType="ProgressBar">
+        <local:FilePathToTitleConverter x:Key="FilePathToTitleConverter" />
+        <local:DoubleToPercentConverter x:Key="DoubleToPercentConverter" />
+        <local:SecondToTimeConverter x:Key="SecondToTimeConverter" />
+
+        <Style x:Key="CircularProgressBar"
+               TargetType="ProgressBar">
+
+
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ProgressBar">
                         <Grid>
-                            <Ellipse Stroke="#FF01D328" StrokeThickness="10" StrokeDashArray="5">
+                            <Ellipse Stroke="#aaa"
+                                     StrokeThickness="10"
+                                     StrokeDashArray="5">
                                 <Ellipse.Triggers>
                                     <EventTrigger RoutedEvent="Ellipse.Loaded">
                                         <BeginStoryboard>
                                             <Storyboard>
-                                                <DoubleAnimation Storyboard.TargetProperty="(Shape.StrokeDashOffset)" From="0" To="100" Duration="0:0:3" RepeatBehavior="Forever" />
+                                                <DoubleAnimation Storyboard.TargetProperty="(Shape.StrokeDashOffset)"
+                                                                 From="0"
+                                                                 To="120"
+                                                                 Duration="0:0:3"
+                                                                 RepeatBehavior="Forever" />
                                             </Storyboard>
                                         </BeginStoryboard>
                                     </EventTrigger>
@@ -30,55 +48,793 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
     </Window.Resources>
 
+    <Border>
+
+        <Border.Background>
+
+            <LinearGradientBrush StartPoint="0,0"
+                                 EndPoint="0,1">
+                <GradientStop Color="#FF1E1E1E"
+                              Offset="0" />
+                <GradientStop Color="#FF2D2D2D"
+                              Offset="1" />
+            </LinearGradientBrush>
+
+        </Border.Background>
+
+        <Grid>
+
+            <!--#region Grid 2x2-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2" />
+                <ColumnDefinition Width="200" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="120" />
+            </Grid.RowDefinitions>
+            <!--#endregion-->
+
+            <!--#region Main content (0,0)-->
+            <Border>
+
+                <Grid>
+                    <Image x:Name="imgBg_Media"
+                           Width="Auto"
+                           Height="Auto"
+                           Stretch="Uniform" />
+                    <MediaElement x:Name="mediaElement"
+                                  LoadedBehavior="Manual"
+                                  MediaOpened="mediaElement_MediaOpened"
+                                  MediaEnded="mediaElement_MediaEnded"
+                                  BufferingStarted="mediaElement_BufferingStarted"
+                                  BufferingEnded="mediaElement_BufferingEnded" />
+                    <ProgressBar x:Name="loadingProgressBar"
+                                 Style="{StaticResource CircularProgressBar}"
+                                 Visibility="Hidden"
+                                 Width="100"
+                                 Height="100" />
 
 
-    <Canvas>
-        <Grid Canvas.Left="10" Canvas.Top="3" Height="357" Width="685">
-            <Image x:Name="imgBg_Media" Stretch="Uniform"/>
-            <MediaElement x:Name="mediaElement"
-                      LoadedBehavior="Manual" MediaOpened="mediaElement_MediaOpened" 
-                      MediaEnded="mediaElement_MediaEnded" 
-                      BufferingStarted="mediaElement_BufferingStarted" 
-                      BufferingEnded="mediaElement_BufferingEnded"/>
+                </Grid>
+
+            </Border>
+            <!--#endregion-->
+
+            <!--#region Playlist (0,2)-->
+            <Border CornerRadius="10"
+                    Grid.Column="2"
+                    Background="#333">
+                <DockPanel>
+                    <StackPanel Name="stackpanel_PlaylistButtons"
+                                DockPanel.Dock="Top">
+                        <Button DockPanel.Dock="Top"
+                                x:Name="bthAddPlayList"
+                                Content="Add PlayList"
+                                Width="100"
+                                Style="{StaticResource CustomButtonStyle}"
+                                Click="btnAddPlayList_Click" />
+                        <Button DockPanel.Dock="Top"
+                                x:Name="bthRemovePlayList"
+                                Content="Remove PlayList"
+                                Width="100"
+                                Style="{StaticResource CustomButtonStyle}"
+                                Click="btnRemovePlayList_Click" />
+                    </StackPanel>
+
+                    <StackPanel Name="stackpanel_SongButtons"
+                                DockPanel.Dock="Top"
+                                Visibility="Collapsed">
+                        <Button DockPanel.Dock="Top"
+                                x:Name="bthAddSong"
+                                Content="Add Song"
+                                Width="100"
+                                Style="{StaticResource CustomButtonStyle}"
+                                Click="btnAddSong_Click" />
+                        <Button DockPanel.Dock="Top"
+                                x:Name="bthRemoveSong"
+                                Content="Remove Song"
+                                Width="100"
+                                Style="{StaticResource CustomButtonStyle}"
+                                Click="btnRemoveSong_Click" />
+                    </StackPanel>
+
+                    <StackPanel Name="stackpanel_PlaylistsTitle"
+                                DockPanel.Dock="Top"
+                                Height="30">
+                        <Label Name="label_PlaylistTitle"
+                               DockPanel.Dock="Top"
+                               Content="Playlists"
+                               Foreground="#fff"
+                               FontWeight="Bold"
+                               FontSize="14" />
+                    </StackPanel>
+
+                    <StackPanel Name="stackpanel_SongsTitle"
+                                DockPanel.Dock="Top"
+                                Orientation="Horizontal"
+                                Height="30"
+                                Visibility="Collapsed">
+                        <Button Click="btnBack_Click"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Width="200"
+                                HorizontalContentAlignment="Left">
+                            <!--TODO: transparent hover-->
+                            <StackPanel Orientation="Horizontal">
+                                <Image Source="Assets/back.png"
+                                       Margin="0,0,5,0"
+                                       Width="12"
+                                       Height="12"
+                                       RenderOptions.BitmapScalingMode="HighQuality" />
+                                <Label Name="label_PlaylistName"
+                                       Content="Songs"
+                                       FontWeight="Bold"
+                                       Foreground="White"
+                                       FontSize="14"></Label>
+
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <Grid DockPanel.Dock="Bottom"
+                          MinHeight="350">
+                        <ListBox Background="Transparent"
+                                 x:Name="listBox_PlayList"
+                                 BorderThickness="0 2 0 0"
+                                 Margin="0 0 0 5"
+                                 HorizontalAlignment="Stretch"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemTemplate>
+
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical">
+
+                                        <Button Content="{Binding Name}"
+                                                Height="24"
+                                                Foreground="White"
+                                                Style="{StaticResource NoHoverButtonStyle}"
+                                                PreviewMouseDoubleClick="btnPlaylist_PreviewMouseDoubleClick"
+                                                Click="btnPlaylist_Click">
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Remove"
+                                                              Click="btnRemovePlayList_Click" />
+                                                    <MenuItem Header="Rename"
+                                                              Click="MenuItemRename_Click" />
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                        <TextBox Background="Purple"
+                                                 x:Name="txtBoxRename"
+                                                 Visibility="Collapsed"
+                                                 Width="200"
+                                                 Text="{Binding Name, Mode=TwoWay}"
+                                                 LostFocus="txtBoxRename_LostFocus"
+                                                 KeyDown="txtBoxRename_KeyDown" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+
+                        </ListBox>
+
+
+                        <!-- Song ListBox -->
+                        <ListBox Background="Transparent"
+                                 BorderThickness="0 2 0 0"
+                                 Margin="0 0 0 15"
+                                 HorizontalAlignment="Stretch"
+                                 Visibility="Collapsed"
+                                 x:Name="listBox_Songs"
+                                 SelectionChanged="listBoxSongs_SelectionChanged">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Foreground="White"
+                                               Text="{Binding Converter={StaticResource FilePathToTitleConverter}}" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Grid>
+                </DockPanel>
+            </Border>
+            <!--#endregion-->
+
+            <!--#region GridSpliter-->
+            <GridSplitter Grid.Column="1"
+                          Width="2"
+                          Background="Transparent"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          ResizeBehavior="PreviousAndNext" />
+            <!--#endregion-->
+
+            <!--#region Meida bar(1,*)-->
+
+            <StackPanel Grid.Row="2"
+                        Margin="10 0 0 0"
+                        Width="300"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left">
+                <TextBlock x:Name="txtName"
+                           d:Text="Name"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           TextAlignment="Left"
+                           Foreground="White"
+                           HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           TextWrapping="Wrap"
+                           Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="3" />
+
+                <TextBlock x:Name="txtSinger"
+                           d:Text="Singer"
+                           FontSize="12"
+                           FontStyle="Italic"
+                           TextAlignment="Left"
+                           Foreground="White"
+                           HorizontalAlignment="Left"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Top"
+                           Grid.Row="1"
+                           Grid.Column="0"
+                           Grid.ColumnSpan="3" />
+            </StackPanel>
+
+            <!--#region Media Control Bar -->
+            <Border Grid.Row="1"
+                    Grid.ColumnSpan="3">
+
+                <Grid HorizontalAlignment="Stretch">
+
+                    <!--#region Media Control Buttons-->
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+
+                        <ToggleButton x:Name="ShuffleToggleButton"
+                                      Style="{StaticResource ShuffleToggleButtonStyle}"
+                                      Checked="ShuffleToggleButton_Checked"
+                                      Unchecked="ShuffleToggleButton_Unchecked"
+                                      IsChecked="{Binding isShuffle}" />
+
+                        <Button x:Name="PreviousButton"
+                                Style="{StaticResource PreviousButtonStyle }"
+                                Click="PreviousButton_Click" />
+
+                        <ToggleButton x:Name="PlayPauseToggleButton"
+                                      Style="{StaticResource PlayPauseToggleButtonStyle}"
+                                      IsChecked="{Binding isPaused}"
+                                      d:IsChecked="False"
+                                      Checked="PlayPauseToggleButton_Checked"
+                                      Unchecked="PlayPauseToggleButton_Unchecked"
+                                      RenderTransformOrigin="0.5,0.5">
+                        </ToggleButton>
+
+                        <Button x:Name="NextButton"
+                                Style="{StaticResource NextButtonStyle}"
+                                Click="NextButton_Click" />
+
+                        <ToggleButton x:Name="RepeatToggleButton"
+                                      Style="{StaticResource RepeatToggleButtonStyle}"
+                                      IsChecked="False"
+                                      Checked="RepeatToggleButton_Checked" />
+
+                    </StackPanel>
+                    <!--#endregion-->
+
+                    <!--#region Media Control Slider-->
+
+                    <TextBlock x:Name="txtCurrentTime"
+                               d:Text="00:00"
+                               Text="{Binding ElementName=slider, Path=Value, Converter={StaticResource SecondToTimeConverter}}"
+                               Foreground="White"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Margin="28,2,0,0" />
+
+                    <TextBlock x:Name="txtTotalTime"
+                               d:Text="00:00"
+                               Text="{Binding ElementName=mediaElement, Path=NaturalDuration.TimeSpan, StringFormat={}}"
+                               Foreground="White"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Top"
+                               Margin="0,2,28,0" />
+
+                    <Slider x:Name="slider"
+                            ValueChanged="slider_ValueChanged"
+                            MouseDown="slider_MouseDown"
+                            Maximum="100"
+                            Height="20"
+                            BorderThickness="0"
+                            Background="#666"
+                            HorizontalAlignment="Stretch"
+                            Margin="80 0 80 0"
+                            VerticalAlignment="Top">
+                        <Slider.ToolTip>
+                            <ToolTip Content="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Value, Converter={StaticResource SecondToTimeConverter}}" />
+                        </Slider.ToolTip>
+                        <Slider.Template>
+                            <ControlTemplate TargetType="Slider">
+                                <Grid>
+                                    <ProgressBar Value="{TemplateBinding Value}"
+                                                 Maximum="{TemplateBinding Maximum}"
+                                                 BorderThickness="{TemplateBinding BorderThickness}"
+                                                 Height="{TemplateBinding Height}"
+                                                 Foreground="#eee"
+                                                 Background="Transparent">
+
+                                        <ProgressBar.Template>
+                                            <ControlTemplate>
+
+                                                <Border x:Name="ContainerBorder">
+
+                                                    <Grid x:Name="PART_Track">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="Auto" />
+                                                            <ColumnDefinition Width="*" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <Border x:Name="BackgroundBorder"
+                                                                Grid.ColumnSpan="2"
+                                                                CornerRadius="10"
+                                                                Height="8"
+                                                                Background="#666"
+                                                                HorizontalAlignment="Stretch"
+                                                                VerticalAlignment="Stretch">
+
+
+                                                        </Border>
+
+                                                        <Border x:Name="PART_Indicator"
+                                                                Grid.Column="0"
+                                                                Background="#eee"
+                                                                CornerRadius="10 0 0 10"
+                                                                Width="12"
+                                                                Height="8"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center" />
+
+                                                        <Border x:Name="PART_SelectionRange"
+                                                                Grid.Column="1"
+                                                                Background="#eee"
+                                                                Height="8"
+                                                                CornerRadius="10 0 0 10"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Stretch" />
+
+                                                    </Grid>
+
+                                                </Border>
+
+                                                <ControlTemplate.Triggers>
+
+                                                    <EventTrigger RoutedEvent="MouseEnter">
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="BackgroundBorder"
+                                                                                 Storyboard.TargetProperty="Height"
+                                                                                 From="8"
+                                                                                 To="12"
+                                                                                 Duration="0:0:0.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                                                 Storyboard.TargetProperty="Height"
+                                                                                 From="8"
+                                                                                 To="12"
+                                                                                 Duration="0:0:0.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+
+                                                    <EventTrigger RoutedEvent="MouseLeave">
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="BackgroundBorder"
+                                                                                 Storyboard.TargetProperty="Height"
+                                                                                 From="12"
+                                                                                 To="8"
+                                                                                 Duration="0:0:0.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                        <BeginStoryboard>
+                                                            <Storyboard>
+                                                                <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                                                 Storyboard.TargetProperty="Height"
+                                                                                 From="12"
+                                                                                 To="8"
+                                                                                 Duration="0:0:0.2" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard>
+                                                    </EventTrigger>
+
+                                                </ControlTemplate.Triggers>
+
+
+                                            </ControlTemplate>
+                                        </ProgressBar.Template>
+
+                                    </ProgressBar>
+                                    <Track x:Name="PART_Track">
+                                        <Track.Thumb>
+
+                                            <Thumb>
+                                                <Thumb.Template>
+                                                    <ControlTemplate TargetType="Thumb">
+                                                        <Ellipse Fill="#fff"
+                                                                 VerticalAlignment="Center"
+                                                                 Stroke="#fff"
+                                                                 StrokeThickness="0"
+                                                                 x:Name="thumbEllipse"
+                                                                 Width="12"
+                                                                 Height="12" />
+
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver"
+                                                                     Value="True">
+                                                                <Setter Property="Width"
+                                                                        TargetName="thumbEllipse"
+                                                                        Value="18" />
+                                                                <Setter Property="Height"
+                                                                        TargetName="thumbEllipse"
+                                                                        Value="18" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Thumb.Template>
+                                            </Thumb>
+
+                                        </Track.Thumb>
+                                    </Track>
+                                    <Track x:Name="PART_ClickableTrack"
+                                           IsHitTestVisible="True">
+                                        <Track.Thumb>
+                                            <Thumb Width="0"
+                                                   Height="0"
+                                                   Background="#aaa" />
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Slider.Template>
+                    </Slider>
+                    <!--#endregion-->
+
+                    <!--#region Volume Slider-->
+
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Margin="0 0 10 0">
+
+                        <ToggleButton x:Name="MuteToggleButton"
+                                      Style="{StaticResource MuteToggleButtonStyle}"
+                                      IsChecked="{Binding isMuted}"
+                                      d:IsChecked="False"
+                                      Checked="MuteToggleButton_Checked"
+                                      Unchecked="MuteToggleButton_Unchecked" />
+
+                        <Slider x:Name="volumeSlider"
+                                ValueChanged="volumeSlider_ValueChanged"
+                                Maximum="1"
+                                Minimum="0"
+                                Width="100"
+                                Height="15"
+                                BorderThickness="0"
+                                Background="#666"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Margin="0 0 0 0">
+                            <Slider.ToolTip>
+                                <ToolTip Content="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Value, Converter={StaticResource DoubleToPercentConverter}}" />
+                            </Slider.ToolTip>
+                            <Slider.Template>
+                                <ControlTemplate TargetType="Slider">
+                                    <Grid>
+                                        <ProgressBar Value="{TemplateBinding Value}"
+                                                     Maximum="{TemplateBinding Maximum}"
+                                                     BorderThickness="{TemplateBinding BorderThickness}"
+                                                     Height="{TemplateBinding Height}"
+                                                     Foreground="#eee"
+                                                     Background="Transparent">
+
+                                            <ProgressBar.Template>
+                                                <ControlTemplate>
+
+                                                    <Border x:Name="ContainerBorder">
+
+                                                        <Grid x:Name="PART_Track">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Border x:Name="BackgroundBorder"
+                                                                    Grid.ColumnSpan="2"
+                                                                    CornerRadius="10"
+                                                                    Height="6"
+                                                                    Background="#666"
+                                                                    HorizontalAlignment="Stretch"
+                                                                    VerticalAlignment="Stretch">
+
+                                                            </Border>
+
+                                                            <Border x:Name="PART_Indicator"
+                                                                    Grid.Column="0"
+                                                                    Background="#eee"
+                                                                    CornerRadius="10 0 0 10"
+                                                                    Width="8"
+                                                                    Height="6"
+                                                                    HorizontalAlignment="Left"
+                                                                    VerticalAlignment="Center" />
+
+                                                            <Border x:Name="PART_SelectionRange"
+                                                                    Grid.Column="1"
+                                                                    Background="#eee"
+                                                                    Height="6"
+                                                                    CornerRadius="10 0 0 10"
+                                                                    HorizontalAlignment="Left"
+                                                                    VerticalAlignment="Stretch" />
+
+                                                        </Grid>
+
+                                                    </Border>
+
+                                                    <ControlTemplate.Triggers>
+
+                                                        <EventTrigger RoutedEvent="MouseEnter">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="BackgroundBorder"
+                                                                                     Storyboard.TargetProperty="Height"
+                                                                                     From="6"
+                                                                                     To="10"
+                                                                                     Duration="0:0:0.2" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                                                     Storyboard.TargetProperty="Height"
+                                                                                     From="6"
+                                                                                     To="10"
+                                                                                     Duration="0:0:0.2" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+
+                                                        <EventTrigger RoutedEvent="MouseLeave">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="BackgroundBorder"
+                                                                                     Storyboard.TargetProperty="Height"
+                                                                                     From="10"
+                                                                                     To="6"
+                                                                                     Duration="0:0:0.2" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                                                     Storyboard.TargetProperty="Height"
+                                                                                     From="10"
+                                                                                     To="6"
+                                                                                     Duration="0:0:0.2" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+
+                                                    </ControlTemplate.Triggers>
+
+                                                </ControlTemplate>
+
+                                            </ProgressBar.Template>
+
+                                        </ProgressBar>
+
+                                        <Track x:Name="PART_Track">
+                                            <Track.Thumb>
+
+                                                <Thumb>
+                                                    <Thumb.Template>
+                                                        <ControlTemplate TargetType="Thumb">
+                                                            <Ellipse Fill="#fff"
+                                                                     VerticalAlignment="Center"
+                                                                     Stroke="#fff"
+                                                                     StrokeThickness="0"
+                                                                     x:Name="thumbEllipse"
+                                                                     Width="8"
+                                                                     Height="8" />
+
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver"
+                                                                         Value="True">
+                                                                    <Setter Property="Width"
+                                                                            TargetName="thumbEllipse"
+                                                                            Value="12" />
+                                                                    <Setter Property="Height"
+                                                                            TargetName="thumbEllipse"
+                                                                            Value="12" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Thumb.Template>
+                                                </Thumb>
+
+                                            </Track.Thumb>
+
+                                        </Track>
+
+                                        <Track x:Name="PART_ClickableTrack"
+                                               IsHitTestVisible="True">
+                                            <Track.Thumb>
+                                                <Thumb Width="0"
+                                                       Height="0"
+                                                       Background="#aaa" />
+                                            </Track.Thumb>
+
+                                        </Track>
+
+                                    </Grid>
+                                </ControlTemplate>
+                            </Slider.Template>
+                        </Slider>
+
+
+                    </StackPanel>
+
+                    <!--#endregion-->
+
+                </Grid>
+                <!--#endregion-->
+            </Border>
+            <!--#endregion-->
+
         </Grid>
-        <ProgressBar x:Name="loadingProgressBar" Style="{StaticResource CircularProgressBar}" Width="100" Height="100" Canvas.Left="302" Canvas.Top="132" Visibility="Hidden" />
-        <Button x:Name="btnPlay" Content="Play" Canvas.Left="761" Canvas.Top="15" Width="75" Click="btnPlay_Click" HorizontalAlignment="Center" VerticalAlignment="Top" />
-        <Button x:Name="btnPause" Content="Pause" Canvas.Left="761" Canvas.Top="40" Width="75" Click="btnPause_Click" />
-        <Button x:Name="btnStop" Content="Stop" Canvas.Left="761" Canvas.Top="65" Width="75" Click="btnStop_Click" />
-        <Button x:Name="btnNext" Content="Next" Canvas.Left="761" Canvas.Top="90" Width="75" Click="btnNext_Click" />
-        <Button x:Name="btnPrevious" Content="Previous" Canvas.Left="761" Canvas.Top="115" Width="75" Click="btnPrevious_Click" />
-        <Button x:Name="btnShuffle" Content="Shuffle" Canvas.Left="761" Canvas.Top="140" Width="75" Click="btnShuffle_Click" />
-        <Slider x:Name="sldVolume" Canvas.Left="761" Canvas.Top="172" Width="100" Minimum="0" Maximum="1" Value="{Binding ElementName=mediaElement, Path=Volume}" SmallChange="0.1"/>
-        <Slider x:Name="slider" Canvas.Left="5" Canvas.Top="361" Width="700" ValueChanged="slider_ValueChanged" Maximum="100" HorizontalAlignment="Center" VerticalAlignment="Top">
+    </Border>
+
+
+    <!--
+    <Canvas>
+        <Grid Canvas.Left="10"
+              Canvas.Top="3"
+              Height="357"
+              Width="685">
+            <Image x:Name="imgBg_Media"
+                   Stretch="Uniform" />
+            <MediaElement x:Name="mediaElement"
+                          LoadedBehavior="Manual"
+                          MediaOpened="mediaElement_MediaOpened"
+                          MediaEnded="mediaElement_MediaEnded"
+                          BufferingStarted="mediaElement_BufferingStarted"
+                          BufferingEnded="mediaElement_BufferingEnded" />
+        </Grid>
+        <ProgressBar x:Name="loadingProgressBar"
+                     Style="{StaticResource CircularProgressBar}"
+                     Width="100"
+                     Height="100"
+                     Canvas.Left="302"
+                     Canvas.Top="132"
+                     Visibility="Hidden" />
+        <Button x:Name="btnPlay"
+                Content="Play"
+                Canvas.Left="761"
+                Canvas.Top="15"
+                Width="75"
+                Click="btnPlay_Click"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top" />
+        <Button x:Name="btnPause"
+                Content="Pause"
+                Canvas.Left="761"
+                Canvas.Top="40"
+                Width="75"
+                Click="btnPause_Click" />
+        <Button x:Name="btnStop"
+                Content="Stop"
+                Canvas.Left="761"
+                Canvas.Top="65"
+                Width="75"
+                Click="btnStop_Click" />
+        <Button x:Name="btnNext"
+                Content="Next"
+                Canvas.Left="761"
+                Canvas.Top="90"
+                Width="75"
+                Click="btnNext_Click" />
+        <Button x:Name="btnPrevious"
+                Content="Previous"
+                Canvas.Left="761"
+                Canvas.Top="115"
+                Width="75"
+                Click="btnPrevious_Click" />
+        <Button x:Name="btnShuffle"
+                Content="Shuffle"
+                Canvas.Left="761"
+                Canvas.Top="140"
+                Width="75"
+                Click="btnShuffle_Click" />
+        <Slider x:Name="sldVolume"
+                Canvas.Left="761"
+                Canvas.Top="172"
+                Width="100"
+                Minimum="0"
+                Maximum="1"
+                Value="{Binding ElementName=mediaElement, Path=Volume}"
+                SmallChange="0.1" />
+        <Slider x:Name="slider"
+                Canvas.Left="5"
+                Canvas.Top="361"
+                Width="700"
+                ValueChanged="slider_ValueChanged"
+                Maximum="100"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Top">
             <Slider.ToolTip>
                 <ToolTip Content="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Value, StringFormat={}{0:0.00}}" />
             </Slider.ToolTip>
             <Slider.Template>
                 <ControlTemplate TargetType="Slider">
                     <Grid>
-                        <ProgressBar Value="{TemplateBinding Value}" Maximum="{TemplateBinding Maximum}" Foreground="CadetBlue" Background="Transparent" />
+                        <ProgressBar Value="{TemplateBinding Value}"
+                                     Maximum="{TemplateBinding Maximum}"
+                                     Foreground="CadetBlue"
+                                     Background="Transparent" />
                         <Track x:Name="PART_Track">
                             <Track.Thumb>
-                                <Thumb Width="10" Height="10" />
-                                <!-- Set the size of the Thumb here -->
+                                <Thumb Width="10"
+                                       Height="10" />
+
                             </Track.Thumb>
                         </Track>
-                        <Track x:Name="PART_ClickableTrack" IsHitTestVisible="True">
+                        <Track x:Name="PART_ClickableTrack"
+                               IsHitTestVisible="True">
                             <Track.Thumb>
-                                <Thumb Width="0" Height="0" />
+                                <Thumb Width="0"
+                                       Height="0" />
                             </Track.Thumb>
                         </Track>
                     </Grid>
                 </ControlTemplate>
             </Slider.Template>
         </Slider>
-        <TextBlock x:Name="txtName" Text="Name" FontSize="20" FontWeight="Bold" Canvas.Left="5" Canvas.Top="376" Width="700" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" />
-        <TextBlock x:Name="txtSinger" Text="Singer" FontSize="15" FontStyle="Italic" Canvas.Left="5" Canvas.Top="408" Width="700" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Top" />
-        <StackPanel Canvas.Left="5" Canvas.Top="433" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <TextBlock x:Name="txtName"
+                   Text="Name"
+                   FontSize="20"
+                   FontWeight="Bold"
+                   Canvas.Left="5"
+                   Canvas.Top="376"
+                   Width="700"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top" />
+        <TextBlock x:Name="txtSinger"
+                   Text="Singer"
+                   FontSize="15"
+                   FontStyle="Italic"
+                   Canvas.Left="5"
+                   Canvas.Top="408"
+                   Width="700"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top" />
+        <StackPanel Canvas.Left="5"
+                    Canvas.Top="433"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
             <TextBlock Text="Play List" />
-            <ListBox x:Name="listBox_PlayList"  Width="300" Height="100" SelectionChanged="listBoxPlayList_SelectionChanged">
+            <ListBox x:Name="listBox_PlayList"
+                     Width="300"
+                     Height="100"
+                     SelectionChanged="listBoxPlayList_SelectionChanged">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical">
@@ -88,18 +844,50 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </StackPanel>
-        <StackPanel Canvas.Left="305" Canvas.Top="433" HorizontalAlignment="Center" VerticalAlignment="Top">
+        <StackPanel Canvas.Left="305"
+                    Canvas.Top="433"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Top">
             <TextBlock Text="Songs" />
-            <ListBox x:Name="listBox_Songs"  Width="300" Height="100" SelectionChanged="listBoxSongs_SelectionChanged" >
+            <ListBox x:Name="listBox_Songs"
+                     Width="300"
+                     Height="100"
+                     SelectionChanged="listBoxSongs_SelectionChanged">
 
             </ListBox>
         </StackPanel>
-        <StackPanel Orientation="Vertical" Canvas.Left="748" Canvas.Top="433" HorizontalAlignment="Left" VerticalAlignment="Top">
-            <Button x:Name="bthAddPlayList" Content="Add PlayList" Canvas.Left="80" Canvas.Top="25" Width="100" Click="btnAddPlayList_Click" />
-            <Button x:Name="bthAddSong" Content="Add Song" Canvas.Left="80" Canvas.Top="25" Width="100" Click="btnAddSong_Click" />
-            <Button x:Name="bthRemovePlayList" Content="Remove PlayList" Canvas.Left="80" Canvas.Top="25" Width="100" Click="btnRemovePlayList_Click" />
-            <Button x:Name="bthRemoveSong" Content="Remove Song" Canvas.Left="80" Canvas.Top="25" Width="100" Click="btnRemoveSong_Click" />
+        <StackPanel Orientation="Vertical"
+                    Canvas.Left="748"
+                    Canvas.Top="433"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+            <Button x:Name="bthAddPlayList"
+                    Content="Add PlayList"
+                    Canvas.Left="80"
+                    Canvas.Top="25"
+                    Width="100"
+                    Click="btnAddPlayList_Click" />
+            <Button x:Name="bthAddSong"
+                    Content="Add Song"
+                    Canvas.Left="80"
+                    Canvas.Top="25"
+                    Width="100"
+                    Click="btnAddSong_Click" />
+            <Button x:Name="bthRemovePlayList"
+                    Content="Remove PlayList"
+                    Canvas.Left="80"
+                    Canvas.Top="25"
+                    Width="100"
+                    Click="btnRemovePlayList_Click" />
+            <Button x:Name="bthRemoveSong"
+                    Content="Remove Song"
+                    Canvas.Left="80"
+                    Canvas.Top="25"
+                    Width="100"
+                    Click="btnRemoveSong_Click" />
         </StackPanel>
     </Canvas>
+    -->
+
 </Window>
        

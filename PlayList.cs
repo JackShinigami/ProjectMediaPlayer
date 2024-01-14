@@ -40,9 +40,24 @@ namespace ProjectMediaPlayer
         }
 
         public string ID { get => id.ToString(); set => id = int.Parse(value); }
-        public string Name { get => name; set => name = value; }
+        public string Name {
+            get { return name; }
+            set
+            {
+                if (name != value)
+                {
+                    name = value;
+                    OnPropertyChanged(nameof(Name));
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
 
         public void Add(string fileName)
         {
