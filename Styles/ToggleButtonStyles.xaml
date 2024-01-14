@@ -415,4 +415,114 @@
 
     </Style>
 
+    <Style x:Key="MuteToggleButtonStyle"
+           TargetType="ToggleButton">
+
+        <Setter Property="Width"
+                Value="40" />
+
+        <Setter Property="Height"
+                Value="40" />
+
+        <Setter Property="Cursor"
+                Value="Hand" />
+
+        <Setter Property="Template">
+
+            <Setter.Value>
+
+                <ControlTemplate TargetType="ToggleButton">
+
+                    <Border x:Name="ContainerBorder"
+                            Background="#0000">
+                        <Grid>
+                            <Border x:Name="Ellipse"
+                                    VerticalAlignment="Stretch"
+                                    HorizontalAlignment="Stretch"
+                                    CornerRadius="100"
+                                    Background="#0000" />
+
+                            <Border HorizontalAlignment="Center"
+                                    x:Name="MuteBorder"
+                                    Opacity="1"
+                                    VerticalAlignment="Center">
+
+                                <Image Source="../Assets/mute.png"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Width="25"
+                                       Height="25" />
+
+                            </Border>
+
+                            <Border HorizontalAlignment="Center"
+                                    x:Name="VolumeBorder"
+                                    Opacity="0"
+                                    VerticalAlignment="Center">
+                                <Image Source="../Assets/volume.png"
+                                       RenderOptions.BitmapScalingMode="HighQuality"
+                                       Width="25"
+                                       Height="25" />
+                            </Border>
+
+                        </Grid>
+
+                        <VisualStateManager.VisualStateGroups>
+
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="MouseOver">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="Ellipse"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        To="#333"
+                                                        Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="Ellipse"
+                                                        Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                                        To="#888"
+                                                        Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="MuteBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0.2" />
+                                        <DoubleAnimation Storyboard.TargetName="VolumeBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Unchecked">
+                                    <Storyboard>
+                                        <DoubleAnimation Storyboard.TargetName="MuteBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="0"
+                                                         Duration="0:0:0.2" />
+                                        <DoubleAnimation Storyboard.TargetName="VolumeBorder"
+                                                         Storyboard.TargetProperty="Opacity"
+                                                         To="1"
+                                                         Duration="0:0:0.2" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+
+    </Style>
+           
+
 </ResourceDictionary>

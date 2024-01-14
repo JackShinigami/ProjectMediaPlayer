@@ -14,6 +14,8 @@
 
     <Window.Resources>
         <local:FilePathToTitleConverter x:Key="FilePathToTitleConverter" />
+        <local:DoubleToPercentConverter x:Key="DoubleToPercentConverter" />
+        <local:SecondToTimeConverter x:Key="SecondToTimeConverter" />
 
         <Style x:Key="CircularProgressBar"
                TargetType="ProgressBar">
@@ -265,13 +267,13 @@
                            Grid.ColumnSpan="3" />
             </StackPanel>
 
-            <!--#region Media Control Button -->
+            <!--#region Media Control Bar -->
             <Border Grid.Row="1"
                     Grid.ColumnSpan="3">
 
                 <Grid HorizontalAlignment="Stretch">
 
-
+                    <!--#region Media Control Buttons-->
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
 
@@ -304,9 +306,29 @@
                                       Checked="RepeatToggleButton_Checked" />
 
                     </StackPanel>
+                    <!--#endregion-->
+
+                    <!--#region Media Control Slider-->
+
+                    <TextBlock x:Name="txtCurrentTime"
+                               d:Text="00:00"
+                               Text="{Binding ElementName=slider, Path=Value, Converter={StaticResource SecondToTimeConverter}}"
+                               Foreground="White"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Top"
+                               Margin="28,2,0,0" />
+
+                    <TextBlock x:Name="txtTotalTime"
+                               d:Text="00:00"
+                               Text="{Binding ElementName=mediaElement, Path=NaturalDuration.TimeSpan, StringFormat={}}"
+                               Foreground="White"
+                               HorizontalAlignment="Right"
+                               VerticalAlignment="Top"
+                               Margin="0,2,28,0" />
 
                     <Slider x:Name="slider"
                             ValueChanged="slider_ValueChanged"
+                            MouseDown="slider_MouseDown"
                             Maximum="100"
                             Height="20"
                             BorderThickness="0"
@@ -315,7 +337,7 @@
                             Margin="80 0 80 0"
                             VerticalAlignment="Top">
                         <Slider.ToolTip>
-                            <ToolTip Content="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Value, StringFormat={}{0:0.00}}" />
+                            <ToolTip Content="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Value, Converter={StaticResource SecondToTimeConverter}}" />
                         </Slider.ToolTip>
                         <Slider.Template>
                             <ControlTemplate TargetType="Slider">
@@ -464,12 +486,196 @@
                             </ControlTemplate>
                         </Slider.Template>
                     </Slider>
+                    <!--#endregion-->
+
+                    <!--#region Volume Slider-->
+
+                    <StackPanel Orientation="Horizontal"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Right"
+                                Margin="0 0 10 0">
+
+                        <ToggleButton x:Name="MuteToggleButton"
+                                      Style="{StaticResource MuteToggleButtonStyle}"
+                                      IsChecked="{Binding isMuted}"
+                                      d:IsChecked="False"
+                                      Checked="MuteToggleButton_Checked"
+                                      Unchecked="MuteToggleButton_Unchecked" />
+
+                        <Slider x:Name="volumeSlider"
+                                ValueChanged="volumeSlider_ValueChanged"
+                                Maximum="1"
+                                Minimum="0"
+                                Width="100"
+                                Height="15"
+                                BorderThickness="0"
+                                Background="#666"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                Margin="0 0 0 0">
+                            <Slider.ToolTip>
+                                <ToolTip Content="{Binding RelativeSource={RelativeSource Self}, Path=PlacementTarget.Value, Converter={StaticResource DoubleToPercentConverter}}" />
+                            </Slider.ToolTip>
+                            <Slider.Template>
+                                <ControlTemplate TargetType="Slider">
+                                    <Grid>
+                                        <ProgressBar Value="{TemplateBinding Value}"
+                                                     Maximum="{TemplateBinding Maximum}"
+                                                     BorderThickness="{TemplateBinding BorderThickness}"
+                                                     Height="{TemplateBinding Height}"
+                                                     Foreground="#eee"
+                                                     Background="Transparent">
+
+                                            <ProgressBar.Template>
+                                                <ControlTemplate>
+
+                                                    <Border x:Name="ContainerBorder">
+
+                                                        <Grid x:Name="PART_Track">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+
+                                                            <Border x:Name="BackgroundBorder"
+                                                                    Grid.ColumnSpan="2"
+                                                                    CornerRadius="10"
+                                                                    Height="6"
+                                                                    Background="#666"
+                                                                    HorizontalAlignment="Stretch"
+                                                                    VerticalAlignment="Stretch">
+
+                                                            </Border>
+
+                                                            <Border x:Name="PART_Indicator"
+                                                                    Grid.Column="0"
+                                                                    Background="#eee"
+                                                                    CornerRadius="10 0 0 10"
+                                                                    Width="8"
+                                                                    Height="6"
+                                                                    HorizontalAlignment="Left"
+                                                                    VerticalAlignment="Center" />
+
+                                                            <Border x:Name="PART_SelectionRange"
+                                                                    Grid.Column="1"
+                                                                    Background="#eee"
+                                                                    Height="6"
+                                                                    CornerRadius="10 0 0 10"
+                                                                    HorizontalAlignment="Left"
+                                                                    VerticalAlignment="Stretch" />
+
+                                                        </Grid>
+
+                                                    </Border>
+
+                                                    <ControlTemplate.Triggers>
+
+                                                        <EventTrigger RoutedEvent="MouseEnter">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="BackgroundBorder"
+                                                                                     Storyboard.TargetProperty="Height"
+                                                                                     From="6"
+                                                                                     To="10"
+                                                                                     Duration="0:0:0.2" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                                                     Storyboard.TargetProperty="Height"
+                                                                                     From="6"
+                                                                                     To="10"
+                                                                                     Duration="0:0:0.2" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+
+                                                        <EventTrigger RoutedEvent="MouseLeave">
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="BackgroundBorder"
+                                                                                     Storyboard.TargetProperty="Height"
+                                                                                     From="10"
+                                                                                     To="6"
+                                                                                     Duration="0:0:0.2" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                            <BeginStoryboard>
+                                                                <Storyboard>
+                                                                    <DoubleAnimation Storyboard.TargetName="PART_Indicator"
+                                                                                     Storyboard.TargetProperty="Height"
+                                                                                     From="10"
+                                                                                     To="6"
+                                                                                     Duration="0:0:0.2" />
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </EventTrigger>
+
+                                                    </ControlTemplate.Triggers>
+
+                                                </ControlTemplate>
+
+                                            </ProgressBar.Template>
+
+                                        </ProgressBar>
+
+                                        <Track x:Name="PART_Track">
+                                            <Track.Thumb>
+
+                                                <Thumb>
+                                                    <Thumb.Template>
+                                                        <ControlTemplate TargetType="Thumb">
+                                                            <Ellipse Fill="#fff"
+                                                                     VerticalAlignment="Center"
+                                                                     Stroke="#fff"
+                                                                     StrokeThickness="0"
+                                                                     x:Name="thumbEllipse"
+                                                                     Width="8"
+                                                                     Height="8" />
+
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver"
+                                                                         Value="True">
+                                                                    <Setter Property="Width"
+                                                                            TargetName="thumbEllipse"
+                                                                            Value="12" />
+                                                                    <Setter Property="Height"
+                                                                            TargetName="thumbEllipse"
+                                                                            Value="12" />
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Thumb.Template>
+                                                </Thumb>
+
+                                            </Track.Thumb>
+
+                                        </Track>
+
+                                        <Track x:Name="PART_ClickableTrack"
+                                               IsHitTestVisible="True">
+                                            <Track.Thumb>
+                                                <Thumb Width="0"
+                                                       Height="0"
+                                                       Background="#aaa" />
+                                            </Track.Thumb>
+
+                                        </Track>
+
+                                    </Grid>
+                                </ControlTemplate>
+                            </Slider.Template>
+                        </Slider>
+
+
+                    </StackPanel>
+
+                    <!--#endregion-->
 
                 </Grid>
-
+                <!--#endregion-->
             </Border>
-            <!--#endregion-->
-
             <!--#endregion-->
 
         </Grid>

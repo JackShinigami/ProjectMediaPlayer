@@ -12,11 +12,13 @@
   <ItemGroup>
     <None Remove="Assets\arrow.png" />
     <None Remove="Assets\back.png" />
+    <None Remove="Assets\Mute.png" />
     <None Remove="Assets\next.png" />
     <None Remove="Assets\previous.png" />
     <None Remove="Assets\repeat.png" />
     <None Remove="Assets\repeat1.png" />
     <None Remove="Assets\shuffle.png" />
+    <None Remove="Assets\volume.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,11 +35,13 @@
     <Resource Include="Assets\back.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Mute.png" />
     <Resource Include="Assets\next.png" />
     <Resource Include="Assets\previous.png" />
     <Resource Include="Assets\repeat.png" />
     <Resource Include="Assets\repeat1.png" />
     <Resource Include="Assets\shuffle.png" />
+    <Resource Include="Assets\volume.png" />
   </ItemGroup>
 
 </Project>

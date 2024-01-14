@@ -51,13 +51,7 @@ namespace ProjectMediaPlayer
                 switch (hotkeyId)
                 {
                     case HOTKEY_ID_PAUSE_PLAY:
-                        if (isPaused)
-                        {
-                            PlayPauseToggleButton_Checked(null, null);
-                        } else
-                        {
-                            PlayPauseToggleButton_Unchecked(null, null);
-                        }
+                        PlayPauseToggleButton.IsChecked = !PlayPauseToggleButton.IsChecked;
                         break;
                     case HOTKEY_ID_SKIP:
                         NextMediaFile();
@@ -72,6 +66,7 @@ namespace ProjectMediaPlayer
         bool isShuffle = false;
         bool isChangeByAuto = false;
         bool isRepeatOne = false;
+        bool isMuted = false;
         private const int HOTKEY_ID_PAUSE_PLAY = 9000;
         private const int HOTKEY_ID_SKIP = 9001;
 
@@ -97,6 +92,7 @@ namespace ProjectMediaPlayer
             //{
             //    listBox_PlayList.SelectedIndex = 0;
             //}
+            volumeSlider.Value = 0.5;
             isPaused = false;
             string lastPlayListID = DataManager.Instance.LastPlayListID();
             string lastSongFileName = DataManager.Instance.LastSongFileName();
@@ -114,6 +110,12 @@ namespace ProjectMediaPlayer
                 {
                     listBox_Songs.SelectedIndex = mediaFileNames.FindIndex(x => x == lastSongFileName);
                     currentMediaIndex = listBox_Songs.SelectedIndex;
+                    if (currentMediaIndex == -1)
+                    {
+                        currentMediaIndex = 0;
+                        listBox_Songs.SelectedIndex = 0;
+                    }
+
                     UpdateUI(mediaFileNames[currentMediaIndex]);
                     slider.Value = lastSongPosition;
                 }
@@ -195,6 +197,8 @@ namespace ProjectMediaPlayer
                 MessageBox.Show("File không hợp lệ");
                 btnRemoveSong_Click(null, null);
             }
+
+ 
         }
 
         private List<string> SelectMediaFiles()
@@ -216,13 +220,15 @@ namespace ProjectMediaPlayer
 
         private void mediaElement_MediaOpened(object sender, RoutedEventArgs e)
         {
-            slider.Maximum = mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+           
+            double toltalTime = slider.Maximum = mediaElement.NaturalDuration.TimeSpan.TotalSeconds;
+            SecondToTimeConverter secondToTimeConverter = new SecondToTimeConverter();
+            txtTotalTime.Text = secondToTimeConverter.Convert(toltalTime, null, null, CultureInfo.CurrentCulture).ToString();
             slider.IsEnabled = true;
             timer.Start();
         }
         private void mediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
-            slider.IsEnabled = false;
             slider.Value = 0;
             if (isRepeatOne)
             {
@@ -390,8 +396,7 @@ namespace ProjectMediaPlayer
                         listBox_Songs.SelectedIndex = -1;
 
                     mediaFileNames = playLists[0].ListFileName;
-                }
-                else
+                } else
                 {
                     listBox_Songs.ItemsSource = null;
                     mediaFileNames = new List<string>();
@@ -440,7 +445,7 @@ namespace ProjectMediaPlayer
             timer.Stop();
             isPaused = true;
         }
-        
+
         /// <summary>
         /// Unchecked = Play
         /// </summary>
@@ -517,17 +522,17 @@ namespace ProjectMediaPlayer
                     stackpanel_SongButtons.Visibility = Visibility.Visible;
                 }
             }
-            e.Handled = true; 
+            e.Handled = true;
         }
 
         private void RepeatToggleButton_Checked(object sender, RoutedEventArgs e)
         {
-            isRepeatOne = RepeatToggleButton.IsChecked!.Value;
+            isRepeatOne = true;
         }
 
         private void RepeatToggleButton_Unchecked(object sender, RoutedEventArgs e)
         {
-            isRepeatOne = RepeatToggleButton.IsChecked!.Value;
+            isRepeatOne = false;
         }
 
         private void ShuffleToggleButton_Checked(object sender, RoutedEventArgs e)
@@ -538,6 +543,53 @@ namespace ProjectMediaPlayer
         private void ShuffleToggleButton_Unchecked(object sender, RoutedEventArgs e)
         {
             isShuffle = ShuffleToggleButton.IsChecked!.Value;
+        }
+
+        /// <summary>
+        /// Checked = Mute
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MuteToggleButton_Checked(object sender, RoutedEventArgs e)
+        {
+            isMuted = mediaElement.IsMuted = MuteToggleButton.IsChecked!.Value;
+        }
+
+        /// <summary>
+        /// Unchecked = Unmute
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MuteToggleButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            isMuted = mediaElement.IsMuted = MuteToggleButton.IsChecked!.Value;
+        }
+
+        private void slider_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // ghi nhận giá trị tương đối của chuột so với slider
+            double mousePosition = e.GetPosition(slider).X;
+            double ratio = mousePosition / slider.ActualWidth;
+
+            // tính giá trị tương đối của slider
+            double relativeValue = ratio * slider.Maximum;
+            slider.Value = relativeValue;
+
+        }
+
+        private void volumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            // set volume
+            mediaElement.Volume = volumeSlider.Value;
+
+            // set mute
+            if (volumeSlider.Value == 0)
+            {
+                MuteToggleButton.IsChecked = isMuted = true;
+            } else
+            {
+                MuteToggleButton.IsChecked = isMuted = false;
+            }
         }
     }
 }
