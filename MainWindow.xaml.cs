@@ -496,8 +496,6 @@ namespace ProjectMediaPlayer
             }
         }
 
-
-
         private void btnPlaylist_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -589,6 +587,81 @@ namespace ProjectMediaPlayer
             } else
             {
                 MuteToggleButton.IsChecked = isMuted = false;
+            }
+        }
+        
+        private void txtBoxRename_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                TextBox txtBoxRename = sender as TextBox;
+                txtBoxRename.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+
+                if (child is T)
+                {
+                    return (T)child;
+                }
+
+                T childItem = FindVisualChild<T>(child);
+                if (childItem != null)
+                {
+                    return childItem;
+                }
+            }
+
+            return null;
+        }
+
+        private T FindVisualParent<T>(DependencyObject child) where T : DependencyObject
+        {
+            while ((child != null) && !(child is T))
+            {
+                child = VisualTreeHelper.GetParent(child);
+            }
+            return child as T;
+        }
+
+        private void MenuItemRename_Click(object sender, RoutedEventArgs e)
+        {
+            ContextMenu contextMenu = (ContextMenu)((MenuItem)sender).Parent;
+            Button button = (Button)contextMenu.PlacementTarget;
+
+            TextBox txtBoxRename = FindVisualChild<TextBox>(button.Parent as StackPanel);
+
+            if (txtBoxRename != null)
+            {
+                txtBoxRename.Visibility = Visibility.Visible;
+                button.Visibility = Visibility.Collapsed;
+                txtBoxRename.Focus();
+            }
+        }
+
+        private void txtBoxRename_LostFocus(object sender, RoutedEventArgs e)
+        {
+            TextBox? txtBoxRename = sender as TextBox;
+            txtBoxRename.Visibility = Visibility.Collapsed;
+
+            StackPanel stackPanel = FindVisualParent<StackPanel>(txtBoxRename);
+
+            Button button = FindVisualChild<Button>(stackPanel);
+            if (button != null)
+            {
+                button.Visibility = Visibility.Visible;
+                PlayList? playlist = button.DataContext as PlayList;
+                if (playlist != null)
+                {
+                    playlist.Name = txtBoxRename.Text;
+                    DataManager.Instance.RemovePlayList(playlist);
+                    DataManager.Instance.AddPlayList(playlist);
+                }
             }
         }
     }

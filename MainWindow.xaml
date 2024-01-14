@@ -177,6 +177,7 @@
                                        FontWeight="Bold"
                                        Foreground="White"
                                        FontSize="14"></Label>
+
                             </StackPanel>
                         </Button>
                     </StackPanel>
@@ -190,17 +191,36 @@
                                  HorizontalAlignment="Stretch"
                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <ListBox.ItemTemplate>
+
                                 <DataTemplate>
                                     <StackPanel Orientation="Vertical">
+
                                         <Button Content="{Binding Name}"
                                                 Height="24"
                                                 Foreground="White"
                                                 Style="{StaticResource NoHoverButtonStyle}"
                                                 PreviewMouseDoubleClick="btnPlaylist_PreviewMouseDoubleClick"
-                                                Click="btnPlaylist_Click" />
+                                                Click="btnPlaylist_Click">
+                                            <Button.ContextMenu>
+                                                <ContextMenu>
+                                                    <MenuItem Header="Remove"
+                                                              Click="btnRemovePlayList_Click" />
+                                                    <MenuItem Header="Rename"
+                                                              Click="MenuItemRename_Click" />
+                                                </ContextMenu>
+                                            </Button.ContextMenu>
+                                        </Button>
+                                        <TextBox Background="Purple"
+                                                 x:Name="txtBoxRename"
+                                                 Visibility="Collapsed"
+                                                 Width="200"
+                                                 Text="{Binding Name, Mode=TwoWay}"
+                                                 LostFocus="txtBoxRename_LostFocus"
+                                                 KeyDown="txtBoxRename_KeyDown" />
                                     </StackPanel>
                                 </DataTemplate>
                             </ListBox.ItemTemplate>
+
                         </ListBox>
 
 

@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <None Remove="Assets\arrow.png" />
+    <None Remove="Assets\appIcon.png" />
     <None Remove="Assets\back.png" />
     <None Remove="Assets\Mute.png" />
     <None Remove="Assets\next.png" />
@@ -32,6 +33,7 @@
 
   <ItemGroup>
     <Resource Include="Assets\arrow.png" />
+    <Resource Include="Assets\appIcon.png" />
     <Resource Include="Assets\back.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
