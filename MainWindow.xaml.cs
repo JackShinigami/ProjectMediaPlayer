@@ -197,6 +197,11 @@ namespace ProjectMediaPlayer
                     var bin = (byte[])(file.Tag.Pictures[0].Data.Data);
                     imgBg_Media.Source = LoadImage(bin);
                 }
+                else
+                {
+                    imgBg_Media.Source = new BitmapImage(new Uri("pack://application:,,,/Assets/Music.png"));
+                } 
+                    
                 mediaElement.Play();
                 timer.Start();
                 slider.Value = 0;

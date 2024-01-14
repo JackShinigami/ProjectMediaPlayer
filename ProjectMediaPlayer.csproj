@@ -13,6 +13,7 @@
     <None Remove="Assets\arrow.png" />
     <None Remove="Assets\appIcon.png" />
     <None Remove="Assets\back.png" />
+    <None Remove="Assets\Music.png" />
     <None Remove="Assets\Mute.png" />
     <None Remove="Assets\next.png" />
     <None Remove="Assets\previous.png" />
@@ -37,6 +38,7 @@
     <Resource Include="Assets\back.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Music.png" />
     <Resource Include="Assets\Mute.png" />
     <Resource Include="Assets\next.png" />
     <Resource Include="Assets\previous.png" />
