@@ -20,5 +20,5 @@
 5. Add hooking to support global shortcut key for pause / play / skip to next file
 ## Các chức năng improvement chưa thực hiện
 1. Display preview when seeking
-
+## Lưu ý: ứng dụng cài ở ổ C sẽ không chạy được nên mong thầy sẽ cài đặt ở ổ D
 ## Link demo trên youtube: https://youtu.be/hJ8_Bltxi64 
